@@ -1,7 +1,8 @@
 from typing import Sequence, Optional
+import logging
 
 from interfaces import Modulator, Demodulator
-from utils import parse_args, load_package
+from utils import parse_args, load_package, configure_logging
 
 
 class ModulatorHub:
@@ -15,18 +16,29 @@ class ModulatorHub:
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
+
     modulators = load_package(Modulator)
     demodulators = load_package(Demodulator)
 
     args = parse_args(argv, modulators, demodulators)
 
-    print(args)
+    logger = configure_logging(args)
 
-    print(modulators)
-    print(demodulators)
+    logger.debug("test")
+    logger.info("test1")
+    logger.warning("test2")
+    logger.error("test3")
+    logger.info(f"received app run args: {args}")
+    logger.info(f"loaded modulators: {', '.join([mod for mod, cls in modulators.items()])}")
+    logger.info(f"loaded demodulators: {', '.join([mod for mod, cls in demodulators.items()])}")
 
-    hub = ModulatorHub()
-    hub.modulate(bytearray("hello world".encode("ASCII")), modulators["FSK"])
+    if args["command"] == "modulate":
+        hub = ModulatorHub()
+        hub.modulate(bytearray("hello world".encode("ASCII")), modulators["FSK"])
+    elif args["command"] == "demodulate":
+        raise NotImplementedError("demodulation not implemented yet")
+    else:
+        raise TypeError(f"program can be run either in modulate or demodulate mode! '{args['command']}' is not valid")
 
     return 0
 

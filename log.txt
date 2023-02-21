@@ -1,0 +1,7 @@
+2023-02-21 18:13:44,759 759ms - (utils.py:47) - INFO - python modem 
+2023-02-21 18:13:44,759 759ms - (main.py:28) - INFO - test1 
+2023-02-21 18:13:44,759 759ms - (main.py:29) - WARNING - test2 
+2023-02-21 18:13:44,759 759ms - (main.py:30) - ERROR - test3 
+2023-02-21 18:13:44,759 759ms - (main.py:31) - INFO - received app run args: {'command': 'modulate', 'raw': False, 'verbose': False, 'mode': 'FSK', 'output': 'output.wav', 'play': False} 
+2023-02-21 18:13:44,759 759ms - (main.py:32) - INFO - loaded modulators: ASK, FSK 
+2023-02-21 18:13:44,759 759ms - (main.py:33) - INFO - loaded demodulators: FSK, ASK 

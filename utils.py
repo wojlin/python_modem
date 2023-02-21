@@ -1,9 +1,64 @@
 from typing import Sequence, Optional
 from glob import glob
 import argparse
+import logging
 import inspect
 import sys
 import os
+
+
+class CustomFormatter(logging.Formatter):
+
+    grey = "\x1b[38;20m"
+    yellow = "\x1b[33;20m"
+    red = "\x1b[31;20m"
+    bold_red = "\x1b[31;1m"
+    reset = "\x1b[0m"
+    format = "%(asctime)s %(msecs)03dms - (%(filename)s:%(lineno)d) - %(levelname)s - %(message)s "
+
+    FORMATS = {
+        logging.DEBUG: grey + format + reset,
+        logging.INFO: grey + format + reset,
+        logging.WARNING: yellow + format + reset,
+        logging.ERROR: red + format + reset,
+        logging.CRITICAL: bold_red + format + reset
+    }
+
+    def format(self, record):
+        log_fmt = self.FORMATS.get(record.levelno)
+        formatter = logging.Formatter(log_fmt)
+        return formatter.format(record)
+
+
+def configure_logging(args: dict) -> logging.Logger:
+    """
+    this method configures logging
+    :param args: dict of parsed args from parse_args method
+    :return:
+    """
+    log_path = "log.txt"
+    level = logging.DEBUG if args["verbose"] else logging.INFO
+    level = logging.CRITICAL if args["raw"] else level
+
+    logging.basicConfig(filename=log_path,
+                        filemode="w",
+                        format="%(asctime)s %(msecs)03dms - (%(filename)s:%(lineno)d) - %(levelname)s - %(message)s ",
+                        level=level)
+    logging.info("python modem")
+
+    logger = logging.getLogger("python_modem")
+    logger.setLevel(level)
+
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(level)
+    ch.setFormatter(CustomFormatter())
+    logger.addHandler(ch)
+
+    fh = logging.FileHandler(log_path)
+    fh.setLevel(logging.DEBUG)
+    logger.addHandler(fh)
+
+    return logger
 
 
 def parse_args(argv: Optional[Sequence[str]] = None, modulators=None, demodulators=None) -> dict:
