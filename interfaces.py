@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class Modulator(ABC):
     @abstractmethod
-    def __init__(self, logger):
+    def __init__(self, logger, config):
         pass
 
     @abstractmethod
@@ -13,7 +13,7 @@ class Modulator(ABC):
 
 class Demodulator(ABC):
     @abstractmethod
-    def __init__(self, logger):
+    def __init__(self, logger, config):
         pass
 
     @abstractmethod

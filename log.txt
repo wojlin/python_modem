@@ -1,6 +1,9 @@
-2023-02-22 11:35:16,459 459ms - (program_core.py:74) - INFO - python modem 
-2023-02-22 11:35:16,459 459ms - (program_core.py:29) - INFO - received app run args: {'command': 'modulate', 'raw': False, 'verbose': False, 'mode': 'ASK', 'input': '/PROJECTS/python_modem/tests/ascii_short', 'output': 'output.wav', 'play': False} 
-2023-02-22 11:35:16,459 459ms - (program_core.py:30) - INFO - loaded modulators: ASK, FSK 
-2023-02-22 11:35:16,459 459ms - (program_core.py:31) - INFO - loaded demodulators: FSK, ASK 
-2023-02-22 11:35:16,459 459ms - (main.py:36) - INFO - init stage complete! 
-2023-02-22 11:35:16,459 459ms - (main.py:24) - ERROR - <modulate> method needs to be called before <play> method! 
+2023-02-22 16:59:03,308 308ms - (program_core.py:74) - INFO - python modem 
+2023-02-22 16:59:03,308 308ms - (program_core.py:29) - INFO - received app run args: {'command': 'modulate', 'raw': False, 'verbose': True, 'mode': 'ASK', 'input': '/PROJECTS/python_modem/tests/ascii_short', 'output': 'output.wav', 'play': False} 
+2023-02-22 16:59:03,308 308ms - (program_core.py:30) - INFO - loaded modulators: ASK, FSK 
+2023-02-22 16:59:03,309 309ms - (program_core.py:31) - INFO - loaded demodulators: FSK, ASK 
+2023-02-22 16:59:03,309 309ms - (main.py:14) - INFO - init stage complete! 
+2023-02-22 16:59:03,309 309ms - (processing_hub.py:32) - DEBUG - pre modulation init 
+2023-02-22 16:59:03,309 309ms - (ASK_Modulator.py:7) - DEBUG - ASK modulation init 
+2023-02-22 16:59:03,309 309ms - (ASK_Modulator.py:12) - DEBUG - ASK modulation started 
+2023-02-22 16:59:03,309 309ms - (ASK_Modulator.py:13) - DEBUG - ASK modulation loaded config: '{'cycles_per_symbol': 1, 'datapoints_per_cycle': 50, 'carrier_frequency[Hz]': 4000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1}' 

@@ -8,4 +8,5 @@ class FSK(Modulator):
 
     def modulate(self, input_binary):
         print("modulating fsk")
+
         return []

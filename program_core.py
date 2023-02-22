@@ -187,7 +187,7 @@ class program_core:
         :return:
         """
         package = {}
-        p_name = f"{package_type.__name__}s"
+        p_name = f"{str(package_type.__name__).lower()}s"
 
         modules = []
         for file in glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), f"{p_name}/*.py")):
@@ -202,12 +202,13 @@ class program_core:
                     continue
                 if obj == package_type:
                     continue
+
                 package[name] = obj
         return package
 
     def __load_data_to_bytearray(self, data: str) -> bytearray:
         content = bytearray()
-        is_file = os.path.exists(os.path.dirname(data))
+        is_file = os.path.isfile(os.path.dirname(data))
 
         if not is_file and data.count("/") and data.count("."):
             self.__logger.warning("input data looks like path but does not exist (path will be interpreted as data")
