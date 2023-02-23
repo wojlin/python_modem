@@ -1,9 +1,26 @@
-2023-02-23 13:37:51,995 995ms - (program_core.py:74) - INFO - python modem 
-2023-02-23 13:37:51,995 995ms - (program_core.py:29) - INFO - received app run args: {'command': 'modulate', 'raw': False, 'verbose': True, 'mode': 'ASK', 'input': '/PROJECTS/python_modem/tests/ascii_short', 'output': 'output.wav', 'play': False} 
-2023-02-23 13:37:51,995 995ms - (program_core.py:30) - INFO - loaded modulators: ASK, FSK 
-2023-02-23 13:37:51,995 995ms - (program_core.py:31) - INFO - loaded demodulators: FSK, ASK 
-2023-02-23 13:37:51,995 995ms - (main.py:13) - INFO - init stage complete! 
-2023-02-23 13:37:51,995 995ms - (processing_hub.py:36) - DEBUG - pre modulation init 
-2023-02-23 13:37:51,996 996ms - (ASK_Modulator.py:7) - DEBUG - ASK modulation init 
-2023-02-23 13:37:51,996 996ms - (ASK_Modulator.py:12) - DEBUG - ASK modulation started 
-2023-02-23 13:37:51,996 996ms - (ASK_Modulator.py:13) - DEBUG - ASK modulation loaded config: '{'baud_rate[bps]': 100, 'sample_rate[Hz]': 44100, 'carrier_frequency[Hz]': 4000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1}' 
+2023-02-23 17:22:03,042 042ms - (program_core.py:30) - INFO - received app run args: {'command': 'modulate', 'raw': False, 'verbose': True, 'mode': 'ASK', 'input': '/PROJECTS/python_modem/tests/ascii_short', 'output': 'output.wav', 'play': False} 
+2023-02-23 17:22:03,042 042ms - (program_core.py:31) - INFO - loaded modulators: ASK, FSK 
+2023-02-23 17:22:03,042 042ms - (program_core.py:32) - INFO - loaded demodulators: FSK, ASK 
+2023-02-23 17:22:03,042 042ms - (program_core.py:226) - DEBUG - content: bytearray(b'hello world!') 
+2023-02-23 17:22:03,042 042ms - (main.py:14) - INFO - init stage complete! 
+2023-02-23 17:22:03,042 042ms - (processing_hub.py:91) - DEBUG - pre modulation init 
+2023-02-23 17:22:03,042 042ms - (ASK_Modulator.py:10) - DEBUG - ASK modulation init 
+2023-02-23 17:22:03,042 042ms - (ASK_Modulator.py:15) - DEBUG - ASK modulation started 
+2023-02-23 17:22:03,043 043ms - (ASK_Modulator.py:16) - DEBUG - ASK modulation loaded config: '{'baud_rate[bps]': 96, 'sample_rate[Hz]': 44100, 'carrier_frequency[Hz]': 5000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1}' 
+2023-02-23 17:22:03,043 043ms - (ASK_Modulator.py:26) - DEBUG - data to demodulate: 
+01101000
+01100101
+01101100
+01101100
+01101111
+00100000
+01110111
+01101111
+01110010
+01101100
+01100100
+00100001 
+2023-02-23 17:22:03,043 043ms - (ASK_Modulator.py:27) - DEBUG - data length: 96 symbols 
+2023-02-23 17:22:03,043 043ms - (ASK_Modulator.py:35) - DEBUG - modulated data length: 1.0s 
+2023-02-23 17:22:03,045 045ms - (ASK_Modulator.py:53) - INFO - modulation complete! 
+2023-02-23 17:22:03,045 045ms - (processing_hub.py:35) - INFO - analysing modulated data 

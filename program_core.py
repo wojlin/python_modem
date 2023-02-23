@@ -8,6 +8,7 @@ import sys
 import os
 
 from interfaces import Modulator, Demodulator
+from utils import Binary
 
 
 @dataclass
@@ -16,7 +17,7 @@ class core_data:
     modulators: dict
     demodulators: dict
     args: dict
-    data: bytearray
+    data: Binary
 
 
 class program_core:
@@ -30,7 +31,7 @@ class program_core:
         self.__logger.info(f"loaded modulators: {', '.join([mod for mod, cls in self.__modulators.items()])}")
         self.__logger.info(f"loaded demodulators: {', '.join([mod for mod, cls in self.__demodulators.items()])}")
 
-        self.__data = self.__load_data_to_bytearray(self.__args["input"])
+        self.__data = Binary(self.__load_data_to_bytearray(self.__args["input"]))
 
     def getData(self):
         return core_data(self.__logger, self.__modulators, self.__demodulators, self.__args, self.__data)
@@ -67,23 +68,28 @@ class program_core:
         level = logging.DEBUG if args["verbose"] else logging.INFO
         level = logging.CRITICAL if args["raw"] else level
 
-        logging.basicConfig(filename=log_path,
+        """logging.basicConfig(filename=log_path,
                             filemode="w",
                             format="%(asctime)s %(msecs)03dms - (%(filename)s:%(lineno)d) - %(levelname)s - %(message)s ",
                             level=level)
-        logging.info("python modem")
+        logging.info("python modem")"""
+
+        fileh = logging.FileHandler(log_path, 'w')
+        formatter = logging.Formatter('%(asctime)s %(msecs)03dms - (%(filename)s:%(lineno)d) - %(levelname)s - %(message)s ')
+        fileh.setFormatter(formatter)
 
         logger = logging.getLogger("python_modem")
+
+        for hdlr in logger.handlers[:]:  # remove all old handlers
+            logger.removeHandler(hdlr)
+        logger.addHandler(fileh)
+
         logger.setLevel(level)
 
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(level)
         ch.setFormatter(self.__CustomFormatter())
         logger.addHandler(ch)
-
-        fh = logging.FileHandler(log_path)
-        fh.setLevel(logging.DEBUG)
-        logger.addHandler(fh)
 
         return logger
 
@@ -207,8 +213,7 @@ class program_core:
         return package
 
     def __load_data_to_bytearray(self, data: str) -> bytearray:
-        content = bytearray()
-        is_file = os.path.isfile(os.path.dirname(data))
+        is_file = os.path.isfile(data)
 
         if not is_file and data.count("/") and data.count("."):
             self.__logger.warning("input data looks like path but does not exist (path will be interpreted as data")
@@ -217,6 +222,7 @@ class program_core:
             with open(data, "rb") as file:
                 content = bytearray(file.read())
         else:
-            content = bytearray(content)
+            content = bytearray(data.encode("utf-8"))
+        self.__logger.debug(f"content: {content}")
 
         return content
