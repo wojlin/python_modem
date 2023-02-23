@@ -1,7 +1,7 @@
 {
-  "baud_rate[bps]": 96,
+  "baud_rate[bps]": 97,
   "sample_rate[Hz]": 44100,
-  "carrier_frequency[Hz]": 5000,
+  "carrier_frequency[Hz]": 4000,
   "one_symbol_amplitude": 1.0,
   "zero_symbol_amplitude": 0.1
 }

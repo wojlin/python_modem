@@ -45,11 +45,13 @@ class ASK(Modulator):
             if not data[i] == 0:
                 continue
 
-            left_band = np.floor(i * (sample_rate / baud_rate)).astype(int)
-            right_band = np.floor((i + 1) * (sample_rate / baud_rate)).astype(int)
+            left_band = np.ceil(i * (sample_rate / baud_rate)).astype(int)
+            right_band = np.ceil((i + 1) * (sample_rate / baud_rate)).astype(int)
+            if right_band > len(samples):
+                right_band = len(samples)
             for x in range(left_band, right_band):
                 samples[x] = 0
 
         self.logger.info("modulation complete!")
 
-        return times, samples, sample_rate, self.__class__
+        return times, samples, sample_rate, self.__class__.__name__

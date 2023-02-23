@@ -19,9 +19,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         hub = ModulatorHub(logger=logger, processing_type="Modulator", processing_mode=processing_mode)
         times, samples, sample_rate, class_name = hub.modulate(data.data, data.modulators[processing_mode])
         modulated_data = ModulatedData(class_name, times, samples, sample_rate, data.data)
-        hub.analise_modulated_data(modulated_data)
+
+        if data.args["output"]:
+            hub.save(modulated_data, data.args["output"])
+
         if data.args["play"]:
-            hub.play(samples)
+            hub.play(modulated_data)
+
+        hub.analise_modulated_data(modulated_data)
+
     elif command == "demodulate":
         hub = DemodulatorHub(logger=logger, processing_type="Demodulator", processing_mode=processing_mode)
         hub.demodulate(data, data.modulators[processing_mode])
