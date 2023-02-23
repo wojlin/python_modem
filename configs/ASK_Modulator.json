@@ -1,6 +1,6 @@
 {
-  "cycles_per_symbol": 1,
-  "datapoints_per_cycle": 50,
+  "baud_rate[bps]": 100,
+  "sample_rate[Hz]": 44100,
   "carrier_frequency[Hz]": 4000,
   "one_symbol_amplitude": 1.0,
   "zero_symbol_amplitude": 0.1

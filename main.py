@@ -16,7 +16,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     if command == "modulate":
         hub = ModulatorHub(logger=logger, processing_type="Modulator", processing_mode=processing_mode)
-        hub.modulate(data, data.modulators[processing_mode])
+        samples = hub.modulate(data, data.modulators[processing_mode])
+        hub.analise_modulated_data(samples)
+        if data.args["play"]:
+            hub.play(samples)
     elif command == "demodulate":
         hub = DemodulatorHub(logger=logger, processing_type="Demodulator", processing_mode=processing_mode)
         hub.demodulate(data, data.modulators[processing_mode])

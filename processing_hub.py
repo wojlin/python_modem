@@ -1,3 +1,6 @@
+from matplotlib import pyplot as plt
+from matplotlib import figure
+import sounddevice as sd
 import os
 
 from interfaces import Modulator, Demodulator
@@ -25,8 +28,9 @@ class HUB:
 
 class ModulatorHub(HUB):
 
-    def analize_modulated_data(self, output_samples):
-        print(f"analizing {output_samples}")
+    def analise_modulated_data(self, output_samples):
+        self.logger.info("analysing modulated data")
+        plt.plot(output_samples)
 
     def modulate(self, input_binary: bytearray, modulator_type: type(Modulator)):
         self.logger.debug("pre modulation init")
@@ -38,6 +42,7 @@ class ModulatorHub(HUB):
         if not samples:
             self.logger.error("samples cannot be empty")
             return
+        #sd.play(samples, fs)
 
         self.logger.info("playing modulated data")
 
