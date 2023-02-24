@@ -1,4 +1,5 @@
 from typing import Sequence, Optional
+from crc import Calculator, Crc8
 
 from processing_hub import ModulatorHub, DemodulatorHub
 from program_core import program_core
@@ -17,8 +18,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     if command == "modulate":
         hub = ModulatorHub(logger=logger, processing_type="Modulator", processing_mode=processing_mode)
-        times, samples, sample_rate, class_name = hub.modulate(data.data, data.modulators[processing_mode])
-        modulated_data = ModulatedData(class_name, times, samples, sample_rate, data.data)
+        binary_encoded_data = hub.encode_data(data.data)
+        modulated_data = hub.modulate(binary_encoded_data, data.modulators[processing_mode])
 
         if data.args["output"]:
             hub.save(modulated_data, data.args["output"])

@@ -60,7 +60,7 @@ class ModulatorHub(HUB):
         plot1.set_ylim(ymin=-0.2, ymax=1.2)
         plot1.set_yticks([0, 1])
 
-        plot2.set_xlim(xmin=0, xmax=modulated_data.times[-1] - 0.01)
+        plot2.set_xlim(xmin=0, xmax=modulated_data.times[-1])
         space = np.arange(modulated_data.times[0], modulated_data.times[-1], modulated_data.times[-1] / 10)
         plot2.set_xticks(space)  # , labels=[f"{round(x, 2)}s" for x in space], rotation=50)
 
@@ -69,7 +69,7 @@ class ModulatorHub(HUB):
         plot3.fill_between(line_x, line_y, [min(line_y) for x in line_y],
                            alpha=0.4, color='blue')
         plot3.set_xlim(xmin=0, xmax=int(modulated_data.sample_rate / 2))
-        plot3.set_ylim(ymin=min(line_y), ymax=max(line_y) + 10)
+        plot3.set_ylim(ymin=-100, ymax=max(line_y) + 10)
 
         samples_per_byte = len(modulated_data.samples) / modulated_data.data.getSize()
         for i in range(len(modulated_data.data.getBin())):
@@ -95,7 +95,8 @@ class ModulatorHub(HUB):
         self.logger.debug("pre modulation init")
 
         modulator = modulator_type(self.logger, self.config)
-        return modulator.modulate(input_binary)
+        times, samples, sample_rate, class_name = modulator.modulate(input_binary)
+        return ModulatedData(class_name, times, samples, sample_rate, input_binary)
 
     def play(self, modulated_data: ModulatedData):
         if len(modulated_data.samples) == 0:
@@ -115,6 +116,12 @@ class ModulatorHub(HUB):
             for sample in copy.copy(modulated_data.samples):
                 sample = int(sample * (2 ** 15 - 1))
                 f.writeframes(struct.pack("<h", sample))
+
+    def encode_data(self, input_binary: Binary):
+        config = load_config("configs/communication_config.json")
+
+        output = bytearray()
+        return input_binary
 
 
 class DemodulatorHub(HUB):

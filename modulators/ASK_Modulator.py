@@ -1,8 +1,9 @@
-from interfaces import Modulator
+from scipy.signal import butter, lfilter, freqz, filtfilt
 import numpy as np
 import sys
 
 from utils import Binary
+from interfaces import Modulator
 
 
 class ASK(Modulator):
@@ -51,6 +52,29 @@ class ASK(Modulator):
                 right_band = len(samples)
             for x in range(left_band, right_band):
                 samples[x] = 0
+
+        self.logger.info("applying filter...")
+
+        apply_filters = True
+
+        if apply_filters:
+            _cut_freq = frequency + 500
+            _order = 2
+            nyq = 0.5 * sample_rate
+            normal_cutoff = _cut_freq / nyq
+            # Get the filter coefficients
+            b, a = butter(_order, normal_cutoff, btype='low', analog=False, output='ba')  # noqa
+            samples = filtfilt(b, a, samples)
+
+            _cut_freq = frequency - 500
+            _order = 2
+            nyq = 0.5 * sample_rate
+            normal_cutoff = _cut_freq / nyq
+            # Get the filter coefficients
+            b, a = butter(_order, normal_cutoff, btype='high', analog=False, output='ba')  # noqa
+            samples = filtfilt(b, a, samples)
+
+            samples /= np.max(np.abs(samples), axis=0)
 
         self.logger.info("modulation complete!")
 

@@ -49,8 +49,12 @@ class ModulatedData:
 
 
 def load_config(filepath: str) -> dict:
+    json_data = {}
     with open(filepath) as f:
-        return json.loads(f.read())
+        json_data = json.loads(f.read())
+    data = type("data", (), json_data)
+    return json_data
+
 
 
 
