@@ -9,9 +9,13 @@ class Binary:
     def __init__(self, input_bin: bytearray):
         self.__input_bin = input_bin
         self.__bin = self.__to_bin()
+        self.__str = self.__to_str()
 
     def getSize(self):
         return len(self.__bin)
+
+    def getStr(self):
+        return self.__str
 
     def getBin(self):
         return self.__bin
@@ -38,6 +42,29 @@ class Binary:
         new_data = [int(x) for x in data]
         return new_data
 
+    def __to_str(self):
+        return ''.join([str(x) for x in self.__bin])
+
+
+class Audio:
+    def __init__(self, samples, sample_rate, samples_amount, audio_length):
+        self.__sample_rate = sample_rate
+        self.__samples = samples
+        self.__samples_amount = samples_amount
+        self.__audio_length = audio_length
+
+    def getSamples(self):
+        return self.__samples
+
+    def getSampleRate(self):
+        return self.__sample_rate
+
+    def getSamplesAmount(self):
+        return self.__samples_amount
+
+    def getAudioLength(self):
+        return self.__audio_length
+
 
 @dataclass
 class ModulatedData:
@@ -49,11 +76,8 @@ class ModulatedData:
 
 
 def load_config(filepath: str) -> dict:
-    json_data = {}
     with open(filepath) as f:
-        json_data = json.loads(f.read())
-    data = type("data", (), json_data)
-    return json_data
+        return json.loads(f.read())
 
 
 

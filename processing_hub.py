@@ -1,5 +1,6 @@
 from matplotlib.ticker import FormatStrFormatter
 from matplotlib import pyplot as plt
+from crc import Calculator, Crc8
 import sounddevice as sd
 import numpy as np
 import struct
@@ -8,7 +9,7 @@ import wave
 import os
 
 from interfaces import Modulator, Demodulator
-from utils import load_config, Binary, ModulatedData
+from utils import load_config, Binary, ModulatedData, Audio
 
 
 class HUB:
@@ -17,6 +18,7 @@ class HUB:
         self.processing_type = processing_type
         self.processing_mode = processing_mode
         self.config = self.find_processing_config()
+        self.comm_config = load_config("configs/communication_config.json")
 
     def find_processing_config(self):
         config_path = f"configs/{self.processing_mode}_{self.processing_type}.json"
@@ -94,7 +96,7 @@ class ModulatorHub(HUB):
     def modulate(self, input_binary: Binary, modulator_type: type(Modulator)):
         self.logger.debug("pre modulation init")
 
-        modulator = modulator_type(self.logger, self.config)
+        modulator = modulator_type(self.logger, self.config, self.comm_config)
         times, samples, sample_rate, class_name = modulator.modulate(input_binary)
         return ModulatedData(class_name, times, samples, sample_rate, input_binary)
 
@@ -104,7 +106,7 @@ class ModulatorHub(HUB):
             return
 
         self.logger.info("playing modulated data start")
-        sd.play(modulated_data.samples, modulated_data.sample_rate)
+        sd.play(modulated_data.samples, modulated_data.sample_rate, blocking=True)
         self.logger.info("playing modulated data end")
 
     def save(self, modulated_data: ModulatedData, filepath):
@@ -118,13 +120,48 @@ class ModulatorHub(HUB):
                 f.writeframes(struct.pack("<h", sample))
 
     def encode_data(self, input_binary: Binary):
-        config = load_config("configs/communication_config.json")
+        config = self.comm_config
+
+        start_bit = config["start_byte"]
+        stop_bit = config["stop_byte"]
+        packet_len = config["packet_len[bytes]"]
+        use_crc = config["crc8_sum"]
+
+        packets = []
+
+        bytes_in_packet = 0
+        _packet = []
+        for _byte in input_binary.getByteArray():
+            _packet.append(_byte)
+            bytes_in_packet += 1
+            if bytes_in_packet == packet_len:
+                packets.append(_packet)
+                _packet = []
+                bytes_in_packet = 0
+
+        calculator = Calculator(Crc8.CCITT)  # noqa
+
+        for packet in packets:
+            bin_packet = Binary(bytearray(packet)).getByteArray()
+            if use_crc:
+                crc_sum = calculator.checksum(bin_packet)
+                packet.append(crc_sum)
+            packet.insert(0, start_bit)
+            packet.append(stop_bit)
 
         output = bytearray()
-        return input_binary
+        for packet in packets:
+            for data in packet:
+                output.append(data)
+
+        return Binary(output)
 
 
 class DemodulatorHub(HUB):
 
-    def demodulate(self, input_samples: list, modulator_type: type(Demodulator)):
+    def demodulate(self, audio: Audio, demodulator_type: type(Demodulator)):
         self.logger.debug("pre demodulation init")
+        demodulator = demodulator_type(self.logger, self.config, self.comm_config)
+        demodulator.demodulate(audio)
+
+

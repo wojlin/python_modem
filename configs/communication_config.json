@@ -1,6 +1,7 @@
 {
-  "start_bit": 1,
-  "stop_bit": 0,
+  "baud_rate[bps]": 20,
+  "start_byte": 255,
+  "stop_byte": 0,
   "packet_len[bytes]": 3,
   "crc8_sum": true
 }

@@ -1,30 +1,11 @@
-2023-02-24 12:14:45,611 611ms - (program_core.py:30) - INFO - received app run args: {'command': 'modulate', 'raw': False, 'verbose': True, 'mode': 'ASK', 'input': '/PROJECTS/python_modem/tests/ascii_short', 'output': 'tests/output.wav', 'play': True} 
-2023-02-24 12:14:45,611 611ms - (program_core.py:31) - INFO - loaded modulators: ASK, FSK 
-2023-02-24 12:14:45,611 611ms - (program_core.py:32) - INFO - loaded demodulators: FSK, ASK 
-2023-02-24 12:14:45,611 611ms - (program_core.py:226) - DEBUG - content: bytearray(b'hello world!') 
-2023-02-24 12:14:45,611 611ms - (main.py:15) - INFO - init stage complete! 
-2023-02-24 12:14:45,612 612ms - (processing_hub.py:95) - DEBUG - pre modulation init 
-2023-02-24 12:14:45,612 612ms - (ASK_Modulator.py:11) - DEBUG - ASK modulation init 
-2023-02-24 12:14:45,612 612ms - (ASK_Modulator.py:16) - DEBUG - ASK modulation started 
-2023-02-24 12:14:45,612 612ms - (ASK_Modulator.py:17) - DEBUG - ASK modulation loaded config: '{'baud_rate[bps]': 97, 'sample_rate[Hz]': 44100, 'carrier_frequency[Hz]': 4000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1}' 
-2023-02-24 12:14:45,612 612ms - (ASK_Modulator.py:27) - DEBUG - data to demodulate: 
-01101000
-01100101
-01101100
-01101100
-01101111
-00100000
-01110111
-01101111
-01110010
-01101100
-01100100
-00100001 
-2023-02-24 12:14:45,612 612ms - (ASK_Modulator.py:28) - DEBUG - data length: 96 symbols 
-2023-02-24 12:14:45,612 612ms - (ASK_Modulator.py:36) - DEBUG - modulated data length: 0.9896907216494846s 
-2023-02-24 12:14:45,613 613ms - (ASK_Modulator.py:56) - INFO - applying filter... 
-2023-02-24 12:14:45,616 616ms - (ASK_Modulator.py:79) - INFO - modulation complete! 
-2023-02-24 12:14:45,616 616ms - (processing_hub.py:111) - INFO - saving modulated data to tests/output.wav 
-2023-02-24 12:14:45,847 847ms - (processing_hub.py:106) - INFO - playing modulated data start 
-2023-02-24 12:14:45,849 849ms - (processing_hub.py:108) - INFO - playing modulated data end 
-2023-02-24 12:14:45,849 849ms - (processing_hub.py:37) - INFO - analysing modulated data 
+2023-02-24 21:34:36,689 689ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': True, 'mode': 'ASK', 'input': '/PROJECTS/python_modem/tests/output.wav', 'output': 'tests/output.bin'} 
+2023-02-24 21:34:36,689 689ms - (program_core.py:33) - INFO - loaded modulators: ASK, FSK 
+2023-02-24 21:34:36,689 689ms - (program_core.py:34) - INFO - loaded demodulators: FSK, ASK 
+2023-02-24 21:34:36,689 689ms - (program_core.py:238) - INFO - opening audio file... 
+2023-02-24 21:34:36,691 691ms - (main.py:14) - INFO - init stage complete! 
+2023-02-24 21:34:36,691 691ms - (processing_hub.py:163) - DEBUG - pre demodulation init 
+2023-02-24 21:34:36,691 691ms - (ASK_Demodulator.py:12) - DEBUG - ASK demodulation init 
+2023-02-24 21:34:36,691 691ms - (ASK_Demodulator.py:18) - DEBUG - ASK demodulation started 
+2023-02-24 21:34:36,691 691ms - (ASK_Demodulator.py:19) - DEBUG - ASK demodulation loaded config: '{}' 
+2023-02-24 21:34:36,701 701ms - (ASK_Demodulator.py:29) - DEBUG - audio length: 9.6s 
+2023-02-24 21:34:36,701 701ms - (ASK_Demodulator.py:30) - DEBUG - found main frequency at: 3999Hz 

@@ -1,14 +1,16 @@
 from typing import Sequence, Optional
 from dataclasses import dataclass
+import numpy as np
 from glob import glob
 import argparse
 import logging
 import inspect
+import wave
 import sys
 import os
 
 from interfaces import Modulator, Demodulator
-from utils import Binary
+from utils import Binary, Audio
 
 
 @dataclass
@@ -31,7 +33,12 @@ class program_core:
         self.__logger.info(f"loaded modulators: {', '.join([mod for mod, cls in self.__modulators.items()])}")
         self.__logger.info(f"loaded demodulators: {', '.join([mod for mod, cls in self.__demodulators.items()])}")
 
-        self.__data = Binary(self.__load_data_to_bytearray(self.__args["input"]))
+        if self.__args["command"] == "modulate":
+            self.__data = Binary(self.__load_data_to_bytearray(self.__args["input"]))
+        elif self.__args["command"] == "demodulate":
+            self.__data = self.__decode_samples_from_file(self.__args["input"])
+        else:
+            raise TypeError(f"program can be run either in modulate or demodulate mode! '{self.__args['command']}' is not valid")
 
     def getData(self):
         return core_data(self.__logger, self.__modulators, self.__demodulators, self.__args, self.__data)
@@ -226,3 +233,25 @@ class program_core:
         self.__logger.debug(f"content: {content}")
 
         return content
+
+    def __decode_samples_from_file(self, filepath):
+        self.__logger.info("opening audio file...")
+        ifile = wave.open(filepath)
+        samples = ifile.getnframes()
+        audio = ifile.readframes(samples)
+
+        sample_rate = ifile.getframerate()
+
+
+        # Convert buffer to float32 using NumPy
+        audio_as_np_int16 = np.frombuffer(audio, dtype=np.int16)
+        audio_as_np_float32 = audio_as_np_int16.astype(np.float32)
+
+        # Normalise float32 array so that values are between -1.0 and +1.0
+        max_int16 = 2 ** 15
+        audio_normalised = audio_as_np_float32 / max_int16
+
+        samples_amount = len(audio_normalised)
+        audio_length = samples_amount / sample_rate
+
+        return Audio(audio_normalised, sample_rate, samples_amount, audio_length)

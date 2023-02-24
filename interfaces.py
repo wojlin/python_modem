@@ -17,6 +17,6 @@ class Demodulator(ABC):
         pass
 
     @abstractmethod
-    def demodulate(self, input_binary):
+    def demodulate(self, input_samples):
         pass
 

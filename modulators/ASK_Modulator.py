@@ -7,10 +7,11 @@ from interfaces import Modulator
 
 
 class ASK(Modulator):
-    def __init__(self, logger, config):
+    def __init__(self, logger, config, comm_config):
         logger.debug("ASK modulation init")
         self.logger = logger
         self.config = config
+        self.comm_config = comm_config
 
     def modulate(self, input_binary: Binary):
         self.logger.debug("ASK modulation started")
@@ -18,7 +19,9 @@ class ASK(Modulator):
 
         sample_rate = self.config["sample_rate[Hz]"]
         frequency = self.config["carrier_frequency[Hz]"]
-        baud_rate = self.config["baud_rate[bps]"]
+        baud_rate = self.comm_config["baud_rate[bps]"]
+        one_symbol_amplitude = self.config["one_symbol_amplitude"]
+        zero_symbol_amplitude = self.config["zero_symbol_amplitude"]
 
         data = input_binary.getBin()
         data_len = input_binary.getSize()
@@ -43,22 +46,20 @@ class ASK(Modulator):
         samples = amplitude * np.sin(2 * np.pi * frequency * time + theta)
 
         for i in range(len(data)):
-            if not data[i] == 0:
-                continue
-
             left_band = np.ceil(i * (sample_rate / baud_rate)).astype(int)
             right_band = np.ceil((i + 1) * (sample_rate / baud_rate)).astype(int)
             if right_band > len(samples):
                 right_band = len(samples)
             for x in range(left_band, right_band):
-                samples[x] = 0
+                samples[x] = samples[x] * one_symbol_amplitude if data[i] == 1 else zero_symbol_amplitude
 
         self.logger.info("applying filter...")
 
         apply_filters = True
 
         if apply_filters:
-            _cut_freq = frequency + 500
+            offset = 100
+            _cut_freq = frequency + offset
             _order = 2
             nyq = 0.5 * sample_rate
             normal_cutoff = _cut_freq / nyq
@@ -66,7 +67,7 @@ class ASK(Modulator):
             b, a = butter(_order, normal_cutoff, btype='low', analog=False, output='ba')  # noqa
             samples = filtfilt(b, a, samples)
 
-            _cut_freq = frequency - 500
+            _cut_freq = frequency - offset
             _order = 2
             nyq = 0.5 * sample_rate
             normal_cutoff = _cut_freq / nyq
