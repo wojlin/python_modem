@@ -1,4 +1,5 @@
 from typing import Sequence, Optional
+from matplotlib import pyplot as plt
 
 from processing_hub import ModulatorHub, DemodulatorHub
 from program_core import program_core
@@ -19,6 +20,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     -v modulate -m ASK --i "/PROJECTS/python_modem/tests/ascii_short" -o "tests/output.wav" -p
     -v demodulate -m ASK --i "/PROJECTS/python_modem/tests/output.wav" -o "tests/output.bin"
     -v demodulate -m ASK --i "/PROJECTS/python_modem/tests/output_noisy.wav" -o "tests/output.bin"
+    
+    python3 main.py -v -a "/home/anon/PROJECTS/python_modem/tests/temp/analysis_mod.png" -s modulate -m ASK --i "/home/anon/PROJECTS/python_modem/tests/ascii_short" -o "tests/temp/output.wav" -p
+    python3 main.py -v -a "/home/anon/PROJECTS/python_modem/tests/temp/analysis_demod.png" -s demodulate -m ASK --i "/home/anon/PROJECTS/python_modem/tests/temp/output.wav" -o "tests/temp/output.txt"
+    
     """
 
     if command == "modulate":
@@ -32,7 +37,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         if data.args["play"]:
             hub.play(modulated_data)
 
-        hub.analise_modulated_data(modulated_data)
+        if data.args["analise"] or data.args["show"]:
+            hub.analise_modulated_data(modulated_data)
 
     elif command == "demodulate":
         hub = DemodulatorHub(logger=logger, processing_type="Demodulator", processing_mode=processing_mode)
@@ -42,11 +48,23 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         if data.args["output"]:
             hub.save(demodulated_data, data.args["output"])
 
-        hub.analise_demodulated_data(demodulated_data)
+        if data.args["analise"] or data.args["show"]:
+            hub.analise_demodulated_data(demodulated_data)
     else:
         raise TypeError(f"program can be run either in modulate or demodulate mode! '{command}' is not valid")
 
-    return 0
+    if data.args["analise"]:
+        logger.info(f"saving analysis to '{data.args['analise']}'")
+        plt.savefig(data.args["analise"])
+
+    if data.args["show"]:
+        logger.info("showing analysis...")
+        plt.show()
+
+    exit_code = 0
+    logger.debug(f"exiting with exit code {exit_code}")
+
+    return exit_code
 
 
 if __name__ == "__main__":

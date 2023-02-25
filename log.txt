@@ -1,14 +1,17 @@
-2023-02-25 20:38:48,616 616ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': True, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/output.wav', 'output': 'tests/output.bin'} 
-2023-02-25 20:38:48,616 616ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
-2023-02-25 20:38:48,616 616ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
-2023-02-25 20:38:48,616 616ms - (program_core.py:238) - INFO - opening audio file... 
-2023-02-25 20:38:48,618 618ms - (main.py:14) - INFO - init stage complete! 
-2023-02-25 20:38:48,618 618ms - (processing_hub.py:213) - DEBUG - pre demodulation init 
-2023-02-25 20:38:48,618 618ms - (ASK_Demodulator.py:14) - DEBUG - ASK demodulation init 
-2023-02-25 20:38:48,618 618ms - (ASK_Demodulator.py:20) - DEBUG - ASK demodulation started 
-2023-02-25 20:38:48,618 618ms - (ASK_Demodulator.py:21) - DEBUG - ASK demodulation loaded config: '{}' 
-2023-02-25 20:38:48,631 631ms - (ASK_Demodulator.py:32) - DEBUG - audio length: 14.4s 
-2023-02-25 20:38:48,631 631ms - (ASK_Demodulator.py:33) - DEBUG - found main frequency at: 3999Hz 
-2023-02-25 20:38:54,045 045ms - (main.py:41) - INFO - demodulated data: 'sram hujem i cipko' 
-2023-02-25 20:38:54,045 045ms - (processing_hub.py:218) - INFO - saving demodulated data to 'tests/output.bin' 
-2023-02-25 20:38:54,046 046ms - (processing_hub.py:163) - INFO - analysing modulated data 
+2023-02-25 22:40:08,880 880ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': True, 'analise': '/home/anon/PROJECTS/python_modem/tests/temp/analysis_demod.png', 'show': True, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/temp/output.wav', 'output': 'tests/temp/output.txt'} 
+2023-02-25 22:40:08,880 880ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
+2023-02-25 22:40:08,880 880ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
+2023-02-25 22:40:08,880 880ms - (program_core.py:252) - INFO - opening audio file... 
+2023-02-25 22:40:08,881 881ms - (main.py:15) - INFO - init stage complete! 
+2023-02-25 22:40:08,881 881ms - (processing_hub.py:209) - DEBUG - pre demodulation init 
+2023-02-25 22:40:08,881 881ms - (ASK_Demodulator.py:14) - DEBUG - ASK demodulation init 
+2023-02-25 22:40:08,881 881ms - (ASK_Demodulator.py:20) - DEBUG - ASK demodulation started 
+2023-02-25 22:40:08,881 881ms - (ASK_Demodulator.py:21) - DEBUG - ASK demodulation loaded config: '{}' 
+2023-02-25 22:40:08,894 894ms - (ASK_Demodulator.py:32) - DEBUG - audio length: 14.4s 
+2023-02-25 22:40:08,895 895ms - (ASK_Demodulator.py:33) - DEBUG - found main frequency at: 3999Hz 
+2023-02-25 22:40:14,149 149ms - (main.py:47) - INFO - demodulated data: 'sram hujem i cipko' 
+2023-02-25 22:40:14,149 149ms - (processing_hub.py:214) - INFO - saving demodulated data to 'tests/temp/output.txt' 
+2023-02-25 22:40:14,149 149ms - (processing_hub.py:161) - INFO - analysing modulated data 
+2023-02-25 22:40:14,370 370ms - (main.py:57) - INFO - saving analysis to '/home/anon/PROJECTS/python_modem/tests/temp/analysis_demod.png' 
+2023-02-25 22:40:15,038 038ms - (main.py:61) - INFO - showing analysis... 
+2023-02-25 22:40:24,668 668ms - (main.py:65) - DEBUG - exiting with exit code 0 

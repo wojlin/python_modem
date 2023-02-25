@@ -90,8 +90,6 @@ class ModulatorHub(HUB):
 
         plt.suptitle(f"{modulated_data.modulator.__class__.__name__} modulation")
         plt.subplots_adjust(bottom=0.1, top=0.85, left=0.05, right=0.95)
-        plt.show()
-        plt.clf()
 
     def modulate(self, input_binary: Binary, modulator_type: type(Modulator)):
         self.logger.debug("pre modulation init")
@@ -163,7 +161,7 @@ class DemodulatorHub(HUB):
         self.logger.info("analysing modulated data")
 
         fig = plt.gcf()
-        fig.set_size_inches(10, 8)
+        fig.set_size_inches(17, 8)
         fig.set_dpi(100)
 
         plot1 = plt.subplot2grid((10, 10), (0, 0), rowspan=3, colspan=7)
@@ -206,8 +204,6 @@ class DemodulatorHub(HUB):
 
         plt.suptitle(f"{demodulated_data.demodulator.__class__.__name__} demodulation")
         plt.subplots_adjust(bottom=0.1, top=0.85, left=0.05, right=0.95)
-        plt.show()
-        plt.clf()
 
     def demodulate(self, audio: Audio, demodulator_type: type(Demodulator)):
         self.logger.debug("pre demodulation init")

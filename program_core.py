@@ -190,6 +190,20 @@ class program_core:
                             help="will print out detailed information",
                             action="store_true")
 
+        parser.add_argument('-a',
+                            "--analise",
+                            required=False,
+                            default=None,
+                            help="will analise modulated/demodulated data and save it to given path",
+                            type=str)
+
+        parser.add_argument('-s',
+                            "--show",
+                            required=False,
+                            default=False,
+                            help="will show out performed analysis",
+                            action="store_true")
+
         return vars(parser.parse_args(argv))
 
     @staticmethod
