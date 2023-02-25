@@ -66,12 +66,23 @@ class Audio:
         return self.__audio_length
 
 
+
+@dataclass
+class PacketGraphicalInfoSpan:
+    start_point: int
+    end_point: int
+    value: int
+@dataclass
+class PacketGraphicalInfo:
+    packets_start: list
+    binaries: list[PacketGraphicalInfoSpan]
+
 @dataclass
 class DemodulatedData:
     demodulator: Demodulator
     digital_samples: list
     demodulated_data: bytearray
-    bytes_list: list[[int, int, int]]
+    bytes_list: PacketGraphicalInfo
     audio: Audio
 
 

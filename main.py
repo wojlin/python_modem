@@ -38,6 +38,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         hub = DemodulatorHub(logger=logger, processing_type="Demodulator", processing_mode=processing_mode)
         demodulated_data: DemodulatedData = hub.demodulate(data.data, data.demodulators[processing_mode])
 
+        logger.info(f"demodulated data: '{demodulated_data.demodulated_data.decode()}'")
         if data.args["output"]:
             hub.save(demodulated_data, data.args["output"])
 

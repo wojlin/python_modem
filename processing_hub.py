@@ -166,18 +166,30 @@ class DemodulatorHub(HUB):
         fig.set_size_inches(10, 8)
         fig.set_dpi(100)
 
-        plot1 = plt.subplot2grid((10, 10), (0, 0), rowspan=3, colspan=6)
+        plot1 = plt.subplot2grid((10, 10), (0, 0), rowspan=3, colspan=7)
         plot1.set_title("audio data")
-        plot2 = plt.subplot2grid((10, 10), (4, 0), rowspan=6, colspan=6)
+        plot2 = plt.subplot2grid((10, 10), (4, 0), rowspan=6, colspan=7)
         plot2.set_title("demodulated data")
-        plot3 = plt.subplot2grid((10, 10), (0, 7), rowspan=10, colspan=3)
+        plot3 = plt.subplot2grid((10, 10), (0, 8), rowspan=10, colspan=2)
         plot3.set_title("PSD")
 
         # plot 1
-        plot1.plot(demodulated_data.audio.getSamples(), color="black")
+        plot1.plot(demodulated_data.audio.getSamples(), color="blue")
 
         # plot 2
-        plot2.step([x for x in range(len(demodulated_data.digital_samples))], demodulated_data.digital_samples)
+        height = 1.5
+        plot2.step([x for x in range(len(demodulated_data.digital_samples))], demodulated_data.digital_samples, color="black")
+        plot2.fill_between([x for x in range(len(demodulated_data.digital_samples))], demodulated_data.digital_samples,
+                           step="pre", alpha=1, color='black')
+        for point in demodulated_data.bytes_list.packets_start:
+            plot2.axvline(point, color='red', linewidth=2.0)
+        for span in demodulated_data.bytes_list.binaries:
+            plot2.axvspan(span.start_point, span.end_point, color="red" if span.value == 1 else "blue", alpha=0.1)
+            width = span.end_point-span.start_point
+            half_width = width/4
+            pos = span.start_point + half_width
+            plot2.text(pos, 1.1, str(span.value), fontsize="x-small", fontstretch="extra-condensed")
+        plot2.set_ylim(ymin=0, ymax=height)
 
         # plot 3
         samples = demodulated_data.audio.getSamples()

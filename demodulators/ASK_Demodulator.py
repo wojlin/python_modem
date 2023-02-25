@@ -6,7 +6,7 @@ import math
 from scipy import signal
 
 from interfaces import Demodulator
-from utils import Audio, DemodulatedData
+from utils import Audio, DemodulatedData, PacketGraphicalInfo, PacketGraphicalInfoSpan
 
 
 class ASK(Demodulator):
@@ -52,7 +52,7 @@ class ASK(Demodulator):
         samples_per_bit = int(one_bit_time * samples_amount / audio_len)
 
         packets_start_point = self.__find_starting_sample(samples, samples_per_bit, self.comm_config)
-        print(packets_start_point)
+        #print(packets_start_point)
 
         bits_in_packet = (self.comm_config["packet_len[bytes]"] + 3 if self.comm_config["crc8_sum"] else 2) * 8
         samples_per_packet = samples_per_bit * bits_in_packet
@@ -61,11 +61,13 @@ class ASK(Demodulator):
         for idx, data_pack_start in enumerate(packets_start_point):
             data_packets.append(samples[data_pack_start: data_pack_start + samples_per_packet])
 
+        raw_bits = []
         data = []
         for packet in data_packets:
             packet_data = []
             for i in range(bits_in_packet):
                 bit_value = round(np.average(packet[i*samples_per_bit:i*samples_per_bit+samples_per_bit]))
+                raw_bits.append(bit_value)
                 packet_data.append(bit_value)
             data.append(packet_data)
 
@@ -87,19 +89,25 @@ class ASK(Demodulator):
 
         output_bytes = [item for sublist in bytes_list for item in sublist]
 
-        """plt.step([x for x in range(len(samples))],samples)
+        packet_list = []
+        binaries_list = []
         for start_point in packets_start_point:
+            packet_list.append(start_point)
             plt.axvline(start_point, color="red")
+
             for i in range(bits_in_packet):
-                plt.axvline(start_point+i*samples_per_bit, color='green')
-        plt.show()"""
+                point_left = start_point+(i*samples_per_bit)
+                point_right = start_point+((i+1)*samples_per_bit)
+
+                binaries_list.append(PacketGraphicalInfoSpan(point_left, point_right, raw_bits[0]))
+                raw_bits.pop(0)
 
         demodulated_data = bytearray(output_bytes)
-        bytes_list = []
+
         return DemodulatedData(demodulator=self,
                                digital_samples=samples,
                                demodulated_data=demodulated_data,
-                               bytes_list=bytes_list,
+                               bytes_list=PacketGraphicalInfo(packet_list, binaries_list),
                                audio=audio)
 
     @staticmethod
