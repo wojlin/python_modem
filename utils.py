@@ -2,7 +2,7 @@ import numpy as np
 from dataclasses import dataclass
 import json
 
-from interfaces import Modulator
+from interfaces import Modulator, Demodulator
 
 
 class Binary:
@@ -64,6 +64,15 @@ class Audio:
 
     def getAudioLength(self):
         return self.__audio_length
+
+
+@dataclass
+class DemodulatedData:
+    demodulator: Demodulator
+    digital_samples: list
+    demodulated_data: bytearray
+    bytes_list: list[[int, int, int]]
+    audio: Audio
 
 
 @dataclass

@@ -79,4 +79,4 @@ class ASK(Modulator):
 
         self.logger.info("modulation complete!")
 
-        return times, samples, sample_rate, self.__class__.__name__
+        return times, samples, sample_rate, self

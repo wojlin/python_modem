@@ -9,7 +9,7 @@ import wave
 import os
 
 from interfaces import Modulator, Demodulator
-from utils import load_config, Binary, ModulatedData, Audio
+from utils import load_config, DemodulatedData, ModulatedData, Audio, Binary
 
 
 class HUB:
@@ -88,7 +88,7 @@ class ModulatorHub(HUB):
         plot3.xaxis.set_major_formatter(FormatStrFormatter('%d Hz'))
         plot3.tick_params(axis="x", labelrotation=70)
 
-        plt.suptitle(f"{modulated_data.modulator} modulation")
+        plt.suptitle(f"{modulated_data.modulator.__class__.__name__} modulation")
         plt.subplots_adjust(bottom=0.1, top=0.85, left=0.05, right=0.95)
         plt.show()
         plt.clf()
@@ -110,7 +110,7 @@ class ModulatorHub(HUB):
         self.logger.info("playing modulated data end")
 
     def save(self, modulated_data: ModulatedData, filepath):
-        self.logger.info(f"saving modulated data to {filepath}")
+        self.logger.info(f"saving modulated data to '{filepath}'")
         with wave.open(filepath, 'w') as f:
             f.setnchannels(1)
             f.setframerate(modulated_data.sample_rate)
@@ -159,9 +159,52 @@ class ModulatorHub(HUB):
 
 class DemodulatorHub(HUB):
 
+    def analise_demodulated_data(self, demodulated_data:DemodulatedData):
+        self.logger.info("analysing modulated data")
+
+        fig = plt.gcf()
+        fig.set_size_inches(10, 8)
+        fig.set_dpi(100)
+
+        plot1 = plt.subplot2grid((10, 10), (0, 0), rowspan=3, colspan=6)
+        plot1.set_title("audio data")
+        plot2 = plt.subplot2grid((10, 10), (4, 0), rowspan=6, colspan=6)
+        plot2.set_title("demodulated data")
+        plot3 = plt.subplot2grid((10, 10), (0, 7), rowspan=10, colspan=3)
+        plot3.set_title("PSD")
+
+        # plot 1
+        plot1.plot(demodulated_data.audio.getSamples(), color="black")
+
+        # plot 2
+        plot2.step([x for x in range(len(demodulated_data.digital_samples))], demodulated_data.digital_samples)
+
+        # plot 3
+        samples = demodulated_data.audio.getSamples()
+        sample_rate = demodulated_data.audio.getSampleRate()
+        pxx, freq, line = plot3.psd(samples, Fs=sample_rate, return_line=True)
+        plot3.xaxis.set_major_formatter(FormatStrFormatter('%d Hz'))
+        plot3.tick_params(axis="x", labelrotation=70)
+        line_x = line[0].get_xdata()
+        line_y = line[0].get_ydata()
+        plot3.fill_between(line_x, line_y, [min(line_y) for x in line_y],
+                           alpha=0.4, color='blue')
+        plot3.set_xlim(xmin=0, xmax=int(sample_rate / 2))
+        plot3.set_ylim(ymin=-100, ymax=max(line_y) + 10)
+
+        plt.suptitle(f"{demodulated_data.demodulator.__class__.__name__} demodulation")
+        plt.subplots_adjust(bottom=0.1, top=0.85, left=0.05, right=0.95)
+        plt.show()
+        plt.clf()
+
     def demodulate(self, audio: Audio, demodulator_type: type(Demodulator)):
         self.logger.debug("pre demodulation init")
         demodulator = demodulator_type(self.logger, self.config, self.comm_config)
-        demodulator.demodulate(audio)
+        return demodulator.demodulate(audio)
+
+    def save(self, demodulated_data: DemodulatedData, filepath):
+        self.logger.info(f"saving demodulated data to '{filepath}'")
+        with open(filepath, 'wb') as f:
+            f.write(demodulated_data.demodulated_data)
 
 

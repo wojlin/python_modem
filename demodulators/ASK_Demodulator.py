@@ -1,10 +1,12 @@
+import copy
+
 import matplotlib.pyplot as plt
 import numpy as np
 import math
 from scipy import signal
 
 from interfaces import Demodulator
-from utils import Audio
+from utils import Audio, DemodulatedData
 
 
 class ASK(Demodulator):
@@ -18,7 +20,8 @@ class ASK(Demodulator):
         self.logger.debug("ASK demodulation started")
         self.logger.debug(f"ASK demodulation loaded config: '{self.config}'")
 
-        samples = audio.getSamples()
+        audio_samples = audio.getSamples()
+        samples = copy.copy(audio_samples)
         sample_rate = audio.getSampleRate()
         audio_length = audio.getAudioLength()
         samples_amount = audio.getSamplesAmount()
@@ -66,7 +69,6 @@ class ASK(Demodulator):
                 packet_data.append(bit_value)
             data.append(packet_data)
 
-        print(data)
 
         bytes_list = []
 
@@ -83,24 +85,22 @@ class ASK(Demodulator):
                     bits_array = []
             bytes_list.append(bytes_array[1:data_bytes+0])  # #############  add +1 (skipping crc)!!!!!
 
-
         output_bytes = [item for sublist in bytes_list for item in sublist]
-        print(output_bytes)
-        buf = ""
-        for val in output_bytes:
-            buf += chr(val)
-        print(buf)
 
-        plt.step([x for x in range(len(samples))],samples)
+        """plt.step([x for x in range(len(samples))],samples)
         for start_point in packets_start_point:
             plt.axvline(start_point, color="red")
             for i in range(bits_in_packet):
                 plt.axvline(start_point+i*samples_per_bit, color='green')
-        plt.show()
+        plt.show()"""
 
-
-
-        return samples
+        demodulated_data = bytearray(output_bytes)
+        bytes_list = []
+        return DemodulatedData(demodulator=self,
+                               digital_samples=samples,
+                               demodulated_data=demodulated_data,
+                               bytes_list=bytes_list,
+                               audio=audio)
 
     @staticmethod
     def __find_starting_sample(samples, samples_per_bit, comm_config):
