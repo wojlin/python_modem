@@ -27,7 +27,7 @@ class ASK(Modulator):
         data_len = input_binary.getSize()
 
         if data_len < 1000:
-            self.logger.debug(f"data to demodulate: \n{input_binary}")
+            self.logger.debug(f"data to modulate: \n{input_binary}")
         self.logger.debug(f"data length: {data_len} symbols")
 
         theta = 0

@@ -34,7 +34,7 @@ class program_core:
         self.__logger.info(f"loaded demodulators: {', '.join([mod for mod, cls in self.__demodulators.items()])}")
 
         if self.__args["command"] == "modulate":
-            self.__data = Binary(self.__load_data_to_bytearray(self.__args["input"]))
+            self.__data = self.__load_data_to_bytearray(self.__args["input"])
         elif self.__args["command"] == "demodulate":
             self.__data = self.__decode_samples_from_file(self.__args["input"])
         else:
@@ -233,7 +233,7 @@ class program_core:
                 package[name] = obj
         return package
 
-    def __load_data_to_bytearray(self, data: str) -> bytearray:
+    def __load_data_to_bytearray(self, data: str) -> Binary:
         is_file = os.path.isfile(data)
 
         if not is_file and data.count("/") and data.count("."):
@@ -246,9 +246,9 @@ class program_core:
             content = bytearray(data.encode("utf-8"))
         self.__logger.debug(f"content: {content}")
 
-        return content
+        return Binary(content)
 
-    def __decode_samples_from_file(self, filepath):
+    def __decode_samples_from_file(self, filepath) -> Audio:
         self.__logger.info("opening audio file...")
         ifile = wave.open(filepath)
         samples = ifile.getnframes()

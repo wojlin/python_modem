@@ -17,6 +17,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     processing_mode = data.args["mode"]
 
     """
+    
+    TODO: commit last fix (missing last bytes in modulated data package fix)
+    
     -v modulate -m ASK --i "/PROJECTS/python_modem/tests/ascii_short" -o "tests/output.wav" -p
     -v demodulate -m ASK --i "/PROJECTS/python_modem/tests/output.wav" -o "tests/output.bin"
     -v demodulate -m ASK --i "/PROJECTS/python_modem/tests/output_noisy.wav" -o "tests/output.bin"

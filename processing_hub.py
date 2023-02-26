@@ -137,6 +137,11 @@ class ModulatorHub(HUB):
                 _packet = []
                 bytes_in_packet = 0
 
+        if 0 < bytes_in_packet < packet_len:
+            for i in range(packet_len - bytes_in_packet):
+                _packet.append(0)
+            packets.append(_packet)
+
         calculator = Calculator(Crc8.CCITT)  # noqa
 
         for packet in packets:
