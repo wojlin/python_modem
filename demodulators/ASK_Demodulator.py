@@ -103,6 +103,12 @@ class ASK(Demodulator):
                 raw_bits.pop(0)
 
         demodulated_data = bytearray(output_bytes)
+        
+        for i in reversed(range(len(demodulated_data))):
+            if demodulated_data[i] == 0:
+                demodulated_data.pop()
+            else:
+                break
 
         return DemodulatedData(demodulator=self,
                                digital_samples=samples,
