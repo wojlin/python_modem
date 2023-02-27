@@ -14,9 +14,10 @@ class ModemTest(unittest.TestCase):
         self.test_path = os.path.dirname(os.path.realpath(__file__)) + "/"
         self.temp_path = self.test_path + "temp/"
         self.program_path = f"{'/'.join(self.test_path.split('/')[:-2])}/main.py"
-
-    def test_basic(self):
-        text = create_random_text(5)
+        
+        
+    def length_check(self, length):
+        text = create_random_text(length)
         print(text)
         print(self.test_path)
         print(self.program_path)
@@ -45,26 +46,40 @@ class ModemTest(unittest.TestCase):
             print(f"received text: {content}")
             self.assertEqual(f'"{text}"', content)
 
+    def test_short_message(self):
+        self.length_check(10)
+        
+    
+    def test_medium_message(self):
+        self.length_check(30)
+        
+
+    def test_long_message(self):
+        self.length_check(100)
+
 
 def modem_suite(modem_name: str):
     suite = unittest.TestSuite()
     ModemTest.MODEM_TYPE = modem_name
-    suite.addTest(ModemTest(f"test_basic"))
+    suite.addTest(ModemTest(f"test_short_message"))
+    suite.addTest(ModemTest(f"test_medium_message"))
+    suite.addTest(ModemTest(f"test_long_message"))
     return suite
 
 
 def prepare_test_env():
     test_path = os.path.dirname(os.path.realpath(__file__)) + "/"
-    temp_path = self.test_path + "temp/"
+    temp_path = test_path + "temp/"
     
-    files = glob.glob(temp_path)
-    for f in files:
-        os.remove(f)
+    filelist = [ f for f in os.listdir(temp_path) ]
+    for f in filelist:
+        os.remove(os.path.join(temp_path, f))
         print(f"removed {f} from temp!")
         
     print("test env prepared!")
     
 
 if __name__ == "__main__":
+    prepare_test_env()
     runner = unittest.TextTestRunner()
     runner.run(modem_suite("ASK"))

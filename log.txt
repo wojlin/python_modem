@@ -1,7 +1,7 @@
-2023-02-27 23:41:26,174 174ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': False, 'analise': None, 'show': False, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/temp/ASK.wav', 'output': '/home/anon/PROJECTS/python_modem/tests/temp/ASK.txt'} 
-2023-02-27 23:41:26,175 175ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
-2023-02-27 23:41:26,175 175ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
-2023-02-27 23:41:26,175 175ms - (program_core.py:252) - INFO - opening audio file... 
-2023-02-27 23:41:26,176 176ms - (main.py:15) - INFO - init stage complete! 
-2023-02-27 23:41:28,879 879ms - (main.py:50) - INFO - demodulated data: '"VCFYK"' 
-2023-02-27 23:41:28,879 879ms - (processing_hub.py:219) - INFO - saving demodulated data to '/home/anon/PROJECTS/python_modem/tests/temp/ASK.txt' 
+2023-02-28 00:00:40,558 558ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': False, 'analise': None, 'show': False, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/temp/ASK.wav', 'output': '/home/anon/PROJECTS/python_modem/tests/temp/ASK.txt'} 
+2023-02-28 00:00:40,558 558ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
+2023-02-28 00:00:40,558 558ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
+2023-02-28 00:00:40,558 558ms - (program_core.py:252) - INFO - opening audio file... 
+2023-02-28 00:00:40,565 565ms - (main.py:15) - INFO - init stage complete! 
+2023-02-28 00:01:11,410 410ms - (main.py:50) - INFO - demodulated data: '"JBNCSDIGDBVSYXCKTSFEYTCAVNJFDMLRVJJPRACVVVVSQDMSWPMLKKSSECXXDLZKYVNIZHGOCMZOQOTRMEDJNNLFQSCAZHAFVQLO"' 
+2023-02-28 00:01:11,410 410ms - (processing_hub.py:219) - INFO - saving demodulated data to '/home/anon/PROJECTS/python_modem/tests/temp/ASK.txt' 
