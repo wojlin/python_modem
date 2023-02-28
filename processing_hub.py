@@ -18,10 +18,12 @@ class HUB:
         self.processing_type = processing_type
         self.processing_mode = processing_mode
         self.config = self.find_processing_config()
-        self.comm_config = load_config("configs/communication_config.json")
+        self.dir_name = os.path.dirname(os.path.realpath(__file__))
+        self.comm_config = load_config(f"{self.dir_name}/configs/communication_config.json")
 
     def find_processing_config(self):
-        config_path = f"configs/{self.processing_mode}_{self.processing_type}.json"
+        self.dir_name = os.path.dirname(os.path.realpath(__file__))
+        config_path = f"{self.dir_name}/configs/{self.processing_mode}_{self.processing_type}.json"
         is_file = os.path.isfile(config_path)
         if not is_file:
             config = None

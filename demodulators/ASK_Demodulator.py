@@ -66,9 +66,12 @@ class ASK(Demodulator):
         for packet in data_packets:
             packet_data = []
             for i in range(bits_in_packet):
-                bit_value = round(np.average(packet[i*samples_per_bit:i*samples_per_bit+samples_per_bit]))
-                raw_bits.append(bit_value)
-                packet_data.append(bit_value)
+                try:
+                    bit_value = round(np.average(packet[i*samples_per_bit:i*samples_per_bit+samples_per_bit]))
+                    raw_bits.append(bit_value)
+                    packet_data.append(bit_value)
+                except ValueError:
+                    self.logger.error("data slicing occured")
             data.append(packet_data)
 
 
@@ -129,7 +132,7 @@ class ASK(Demodulator):
         syncA = [float(x) - 0.5 for x in start_pattern]
 
         peaks = [(0, 0)]
-        mindistance = len(start_pattern) * (comm_config["packet_len[bytes]"] + 3 if comm_config["crc8_sum"] else 2)
+        mindistance = len(start_pattern) * (comm_config["packet_len[bytes]"] + 3 if comm_config["crc8_sum"] else 2) - len(start_pattern)
 
         for i in range(len(samples) - len(syncA)):
             corr = np.dot(syncA, signalshifted[i: i + len(syncA)])

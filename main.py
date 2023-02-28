@@ -46,8 +46,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     elif command == "demodulate":
         hub = DemodulatorHub(logger=logger, processing_type="Demodulator", processing_mode=processing_mode)
         demodulated_data: DemodulatedData = hub.demodulate(data.data, data.demodulators[processing_mode])
+        try:
+            logger.info(f"demodulated data: '{demodulated_data.demodulated_data.decode()}'")
+        except UnicodeDecodeError:
+            logger.error(f"demodulated data: '{demodulated_data.demodulated_data}'")
 
-        logger.info(f"demodulated data: '{demodulated_data.demodulated_data.decode()}'")
         if data.args["output"]:
             hub.save(demodulated_data, data.args["output"])
 

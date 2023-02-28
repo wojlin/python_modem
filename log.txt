@@ -1,7 +1,58 @@
-2023-02-28 00:00:40,558 558ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': False, 'analise': None, 'show': False, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/temp/ASK.wav', 'output': '/home/anon/PROJECTS/python_modem/tests/temp/ASK.txt'} 
-2023-02-28 00:00:40,558 558ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
-2023-02-28 00:00:40,558 558ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
-2023-02-28 00:00:40,558 558ms - (program_core.py:252) - INFO - opening audio file... 
-2023-02-28 00:00:40,565 565ms - (main.py:15) - INFO - init stage complete! 
-2023-02-28 00:01:11,410 410ms - (main.py:50) - INFO - demodulated data: '"JBNCSDIGDBVSYXCKTSFEYTCAVNJFDMLRVJJPRACVVVVSQDMSWPMLKKSSECXXDLZKYVNIZHGOCMZOQOTRMEDJNNLFQSCAZHAFVQLO"' 
-2023-02-28 00:01:11,410 410ms - (processing_hub.py:219) - INFO - saving demodulated data to '/home/anon/PROJECTS/python_modem/tests/temp/ASK.txt' 
+2023-02-28 13:23:19,880 880ms - (program_core.py:32) - INFO - received app run args: {'command': 'modulate', 'raw': False, 'verbose': True, 'analise': '/home/anon/PROJECTS/python_modem/tests/temp/analysis_mod.png', 'show': True, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/ascii_short', 'output': 'tests/temp/output.wav', 'play': True} 
+2023-02-28 13:23:19,881 881ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
+2023-02-28 13:23:19,881 881ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
+2023-02-28 13:23:19,881 881ms - (program_core.py:247) - DEBUG - content: bytearray(b'sram hujem i cipkom!') 
+2023-02-28 13:23:19,881 881ms - (main.py:15) - INFO - init stage complete! 
+2023-02-28 13:23:19,881 881ms - (processing_hub.py:97) - DEBUG - pre modulation init 
+2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:11) - DEBUG - ASK modulation init 
+2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:17) - DEBUG - ASK modulation started 
+2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:18) - DEBUG - ASK modulation loaded config: '{'sample_rate[Hz]': 44100, 'carrier_frequency[Hz]': 4000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1}' 
+2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:30) - DEBUG - data to modulate: 
+11111111
+01110011
+01110010
+01100001
+01110010
+00000000
+11111111
+01101101
+00100000
+01101000
+11100101
+00000000
+11111111
+01110101
+01101010
+01100101
+11101100
+00000000
+11111111
+01101101
+00100000
+01101001
+11100010
+00000000
+11111111
+00100000
+01100011
+01101001
+10010001
+00000000
+11111111
+01110000
+01101011
+01101111
+00001111
+00000000
+11111111
+01101101
+00100001
+00000000
+11101111
+00000000 
+2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:31) - DEBUG - data length: 336 symbols 
+2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:39) - DEBUG - modulated data length: 16.8s 
+2023-02-28 13:23:19,952 952ms - (ASK_Modulator.py:56) - INFO - applying filter... 
+2023-02-28 13:23:19,969 969ms - (ASK_Modulator.py:80) - INFO - modulation complete! 
+2023-02-28 13:23:19,969 969ms - (processing_hub.py:113) - INFO - saving modulated data to 'tests/temp/output.wav' 
+2023-02-28 13:23:23,341 341ms - (processing_hub.py:108) - INFO - playing modulated data start 
