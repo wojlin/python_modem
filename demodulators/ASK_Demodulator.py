@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 from scipy import signal
+from crc import Calculator, Crc8
+
 
 from interfaces import Demodulator
 from utils import Audio, DemodulatedData, PacketGraphicalInfo, PacketGraphicalInfoSpan
@@ -72,6 +74,12 @@ class ASK(Demodulator):
                     packet_data.append(bit_value)
                 except ValueError:
                     self.logger.error("data slicing occured")
+                    return DemodulatedData(demodulator=self,
+                               digital_samples=samples,
+                               demodulated_data=bytearray(),
+                               bytes_list=PacketGraphicalInfo([], []),
+                               audio=audio,
+                               crc_check_pass=False)
             data.append(packet_data)
 
 
@@ -79,6 +87,9 @@ class ASK(Demodulator):
 
         data_bytes = (self.comm_config["packet_len[bytes]"] + 1 if self.comm_config["crc8_sum"] else 0)
 
+        calculator = Calculator(Crc8.CCITT)
+        crc_check_pass = True
+        packet_n = 0
         for packet in data:
             bytes_array = []
             bits_array = []
@@ -88,7 +99,20 @@ class ASK(Demodulator):
                     str_repr = ''.join(str(bit) for bit in bits_array)
                     bytes_array.append(int(str_repr, 2))
                     bits_array = []
+
+            packet_data = bytearray(bytes_array[1:data_bytes+0])
+            packet_crc_sum_received = bytes_array[data_bytes]
+
+            packet_crc_sum = calculator.checksum(packet_data)
+
+            if packet_crc_sum == packet_crc_sum_received:
+                self.logger.debug(f"crc sum for packet '{packet_n}' correct!")
+            else:
+                self.logger.error(f"crc sum for packet '{packet_n}' is incorrect! received: {packet_crc_sum} expected: {packet_crc_sum_received}")
+                crc_check_pass = False
+
             bytes_list.append(bytes_array[1:data_bytes+0])  # #############  add +1 (skipping crc)!!!!!
+            packet_n += 1
 
         output_bytes = [item for sublist in bytes_list for item in sublist]
 
@@ -117,7 +141,8 @@ class ASK(Demodulator):
                                digital_samples=samples,
                                demodulated_data=demodulated_data,
                                bytes_list=PacketGraphicalInfo(packet_list, binaries_list),
-                               audio=audio)
+                               audio=audio,
+                               crc_check_pass=crc_check_pass)
 
     @staticmethod
     def __find_starting_sample(samples, samples_per_bit, comm_config):

@@ -84,6 +84,7 @@ class DemodulatedData:
     demodulated_data: bytearray
     bytes_list: PacketGraphicalInfo
     audio: Audio
+    crc_check_pass: bool
 
 
 @dataclass

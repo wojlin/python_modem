@@ -1,9 +1,9 @@
-2023-02-28 23:34:52,036 036ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': False, 'analise': '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation_demodulate.png', 'show': False, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation.wav', 'output': '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation.txt'} 
-2023-02-28 23:34:52,036 036ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
-2023-02-28 23:34:52,036 036ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
-2023-02-28 23:34:52,036 036ms - (program_core.py:252) - INFO - opening audio file... 
-2023-02-28 23:34:52,037 037ms - (main.py:15) - INFO - init stage complete! 
-2023-02-28 23:34:55,608 608ms - (main.py:50) - INFO - demodulated data: 'QPXGHILSDC' 
-2023-02-28 23:34:55,608 608ms - (processing_hub.py:221) - INFO - saving demodulated data to '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation.txt' 
-2023-02-28 23:34:55,608 608ms - (processing_hub.py:168) - INFO - analysing modulated data 
-2023-02-28 23:34:55,756 756ms - (main.py:63) - INFO - saving analysis to '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation_demodulate.png' 
+2023-03-01 23:03:34,856 856ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': False, 'analise': '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation_demodulate.png', 'show': False, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation.wav', 'output': '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation.txt'} 
+2023-03-01 23:03:34,856 856ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
+2023-03-01 23:03:34,856 856ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
+2023-03-01 23:03:34,856 856ms - (program_core.py:252) - INFO - opening audio file... 
+2023-03-01 23:03:34,858 858ms - (main.py:15) - INFO - init stage complete! 
+2023-03-01 23:03:38,463 463ms - (main.py:50) - INFO - demodulated data: 'WBYVPQIQXL' 
+2023-03-01 23:03:38,464 464ms - (processing_hub.py:221) - INFO - saving demodulated data to '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation.txt' 
+2023-03-01 23:03:38,464 464ms - (processing_hub.py:168) - INFO - analysing modulated data 
+2023-03-01 23:03:38,608 608ms - (main.py:64) - INFO - saving analysis to '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation_demodulate.png' 

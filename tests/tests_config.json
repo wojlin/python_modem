@@ -6,7 +6,7 @@
     "length": 10
   },
   "advanced_test": {
-    "run": false,
+    "run": true,
     "baudrate_test_range": {
       "min": 10,
       "max": 1000,

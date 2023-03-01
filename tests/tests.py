@@ -126,21 +126,22 @@ class ModemTest(unittest.TestCase):
         with open(out_txt_name) as f:
             try:
                 content = f.read()
-                print(f'original text: {text}')
-                print(f"received text: {content}")
+                print(f'original text: "{text}"')
+                print(f'received text: "{content}"')
             except UnicodeDecodeError:
                 message = "decoding error when reading output file with standard utf-8 text"
                 print(message)
                 failures.append(failure_template(self.MODULATION, length, baudrate, message))
 
-        if text == content:
+        if text != content:
             message = "input text does not match with output text"
             print(message)
             failures.append(failure_template(self.MODULATION, length, baudrate, message))
-            print("|PASSED|")
+            print("|FAILED|")
 
         else:
-            print("|FAILED|")
+
+            print("|PASSED|")
 
         print("_" * 50)
 
@@ -153,7 +154,7 @@ class ModemTest(unittest.TestCase):
             length = self.TEST_CONFIG["basic_test"]["length"]
 
             failures = self.length_check(length, self.MODULATION, baudrate)
-            assert(failures == [], str(failures))
+            self.assertEqual(0, len(failures))
         else:
             raise unittest.SkipTest("not enabled in test config")
 
@@ -166,7 +167,7 @@ class ModemTest(unittest.TestCase):
                 print(f"running test with baudrate of '{baudrate}'")
                 with self.subTest("baudrate"):
                     failures.append(self.length_check(10, self.MODULATION, baudrate))
-            assert(failures == [], str(failures))
+            self.assertEqual(0, len(failures))
         else:
             raise unittest.SkipTest("not enabled in test config")
 

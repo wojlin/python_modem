@@ -46,16 +46,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     elif command == "demodulate":
         hub = DemodulatorHub(logger=logger, processing_type="Demodulator", processing_mode=processing_mode)
         demodulated_data: DemodulatedData = hub.demodulate(data.data, data.demodulators[processing_mode])
-        try:
+        if demodulated_data.crc_check_pass:
             logger.info(f"demodulated data: '{demodulated_data.demodulated_data.decode()}'")
-        except UnicodeDecodeError:
-            logger.error(f"demodulated data: '{demodulated_data.demodulated_data}'")
 
-        if data.args["output"]:
-            hub.save(demodulated_data, data.args["output"])
+            if data.args["output"]:
+                hub.save(demodulated_data, data.args["output"])
+
+        else:
+            logger.error("crc check failed! received data is corrupted")
+
 
         if data.args["analise"] or data.args["show"]:
             hub.analise_demodulated_data(demodulated_data)
+
     else:
         raise TypeError(f"program can be run either in modulate or demodulate mode! '{command}' is not valid")
 
