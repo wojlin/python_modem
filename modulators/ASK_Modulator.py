@@ -22,6 +22,8 @@ class ASK(Modulator):
         baud_rate = self.comm_config["baud_rate[bps]"]
         one_symbol_amplitude = self.config["one_symbol_amplitude"]
         zero_symbol_amplitude = self.config["zero_symbol_amplitude"]
+        start_silence = self.config["silence_at_start[s]"]
+        end_silence = self.config["silence_at_end[s]"]
 
         data = input_binary.getBin()
         data_len = input_binary.getSize()
@@ -51,16 +53,20 @@ class ASK(Modulator):
             if right_band > len(samples):
                 right_band = len(samples)
             for x in range(left_band, right_band):
-                samples[x] = samples[x] * one_symbol_amplitude if data[i] == 1 else zero_symbol_amplitude
+                samples[x] = samples[x] * one_symbol_amplitude if data[i] == 1 else samples[x] * zero_symbol_amplitude
 
         # TODO: make better start padding
-        samples = np.insert(samples, 0, [0 for x in range(10000)])
-        times = [t+1 for t in times]
-        times = np.insert(times, 0, [x/10000 for x in range(10000)])
+
+        samples = np.insert(samples, 0, [0 for x in range(int(start_silence*1000))])
+        times = [t+start_silence for t in times]
+        times = np.insert(times, 0, [x*start_silence for x in range(int(start_silence*1000))])
+
+        samples = np.append(samples, [0 for x in range(int(end_silence * 1000))], axis=0)
+        times = np.append(times, [times[-1] + x / 1000 for x in range(int(end_silence * 1000))], axis=0)
 
         self.logger.info("applying filter...")
 
-        apply_filters = True
+        apply_filters = False
 
         if apply_filters:
             offset = 100

@@ -75,11 +75,16 @@ class ModulatorHub(HUB):
         plot3.set_xlim(xmin=0, xmax=int(modulated_data.sample_rate / 2))
         plot3.set_ylim(ymin=-100, ymax=max(line_y) + 10)
 
-        # TODO: make better start padding
-        samples_per_byte = (len(modulated_data.samples) - 10000) / modulated_data.data.getSize()
+        start_silence = modulated_data.config["silence_at_start[s]"]
+        start_silence_samples = start_silence * 1000
+
+        end_silence = modulated_data.config["silence_at_end[s]"]
+        end_silence_samples = start_silence * 1000
+
+        samples_per_byte = (len(modulated_data.samples) - start_silence_samples - end_silence_samples) / modulated_data.data.getSize()
         for i in range(len(modulated_data.data.getBin())):
-            _min = samples_per_byte * i / modulated_data.sample_rate + 1
-            _max = samples_per_byte * (i + 1) / modulated_data.sample_rate + 1
+            _min = samples_per_byte * i / modulated_data.sample_rate + start_silence
+            _max = samples_per_byte * (i + 1) / modulated_data.sample_rate + start_silence
             if modulated_data.data.getBin()[i] == 1:
                 plot2.axvspan(xmin=_min, xmax=_max, ymin=-1, ymax=1, alpha=0.3, color='red')
             else:
@@ -99,7 +104,7 @@ class ModulatorHub(HUB):
 
         modulator = modulator_type(self.logger, self.config, self.comm_config)
         times, samples, sample_rate, class_name = modulator.modulate(input_binary)
-        return ModulatedData(class_name, times, samples, sample_rate, input_binary)
+        return ModulatedData(class_name, self.config, times, samples, sample_rate, input_binary)
 
     def play(self, modulated_data: ModulatedData):
         if len(modulated_data.samples) == 0:
@@ -187,14 +192,11 @@ class DemodulatorHub(HUB):
         plot2.step([x for x in range(len(demodulated_data.digital_samples))], demodulated_data.digital_samples, color="black")
         plot2.fill_between([x for x in range(len(demodulated_data.digital_samples))], demodulated_data.digital_samples,
                            step="pre", alpha=1, color='black')
-        for point in demodulated_data.bytes_list.packets_start:
-            plot2.axvline(point, color='red', linewidth=2.0)
-        for span in demodulated_data.bytes_list.binaries:
-            plot2.axvspan(span.start_point, span.end_point, color="red" if span.value == 1 else "blue", alpha=0.1)
-            width = span.end_point-span.start_point
-            half_width = width/4
-            pos = span.start_point + half_width
-            plot2.text(pos, 1.1, str(span.value), fontsize="x-small", fontstretch="extra-condensed")
+        for point in demodulated_data.bytes_list:
+            plot2.axvspan(point.left_edge, point.right_edge, color="red" if point.value == 1 else "blue", alpha=0.3)
+            half_width = point.width/4
+            pos = point.left_edge + half_width
+            plot2.text(pos, 1.1, str(point.value), fontsize="x-small", fontstretch="extra-condensed")
         plot2.set_ylim(ymin=0, ymax=height)
 
         # plot 3

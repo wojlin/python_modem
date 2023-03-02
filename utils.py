@@ -1,4 +1,4 @@
-import numpy as np
+from typing import List
 from dataclasses import dataclass
 import json
 
@@ -68,21 +68,19 @@ class Audio:
 
 
 @dataclass
-class PacketGraphicalInfoSpan:
-    start_point: int
-    end_point: int
+class DataSector:
+    left_edge: int
+    right_edge: int
+    center: int
+    width: int
     value: int
-@dataclass
-class PacketGraphicalInfo:
-    packets_start: list
-    binaries: list[PacketGraphicalInfoSpan]
 
 @dataclass
 class DemodulatedData:
     demodulator: Demodulator
     digital_samples: list
     demodulated_data: bytearray
-    bytes_list: PacketGraphicalInfo
+    bytes_list: List[DataSector]
     audio: Audio
     crc_check_pass: bool
 
@@ -90,6 +88,7 @@ class DemodulatedData:
 @dataclass
 class ModulatedData:
     modulator: Modulator
+    config: dict
     times: list
     samples: list
     sample_rate: int

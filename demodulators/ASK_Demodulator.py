@@ -8,9 +8,8 @@ import math
 from scipy import signal
 from crc import Calculator, Crc8
 
-
 from interfaces import Demodulator
-from utils import Audio, DemodulatedData, PacketGraphicalInfo, PacketGraphicalInfoSpan
+from utils import Audio, DemodulatedData, DataSector
 
 
 class ASK(Demodulator):
@@ -19,14 +18,6 @@ class ASK(Demodulator):
         self.logger = logger
         self.config = config
         self.comm_config = comm_config
-
-    @dataclass
-    class __DataSector:
-        left_edge: int
-        right_edge: int
-        center: int
-        width: int
-        value: int
 
     def demodulate(self, audio: Audio):
         def wrapper():
@@ -55,7 +46,7 @@ class ASK(Demodulator):
 
         main_freq = self.__find_main_frequency(samples, sample_rate, samples_amount)
 
-        self.logger.debug(f"audio length: {round(audio_length,2)}s")
+        self.logger.debug(f"audio length: {round(audio_length, 2)}s")
         self.logger.debug(f"found main frequency at: {int(main_freq)}Hz")
 
         samples = self.__apply_filters(samples, main_freq, sample_rate)
@@ -73,7 +64,7 @@ class ASK(Demodulator):
         return DemodulatedData(demodulator=self,
                                digital_samples=samples,
                                demodulated_data=data,
-                               bytes_list=PacketGraphicalInfo([], []),
+                               bytes_list=sectors,
                                audio=audio,
                                crc_check_pass=crc_check)
 
@@ -83,11 +74,11 @@ class ASK(Demodulator):
 
         sectors = []
         for point in zip(plateaus["left_edges"], plateaus["right_edges"], centers, plateaus["plateau_sizes"]):
-            sector = self.__DataSector(left_edge=point[0],
-                                       right_edge=point[1],
-                                       center=point[2],
-                                       width=point[3],
-                                       value=1)
+            sector = DataSector(left_edge=point[0],
+                                right_edge=point[1],
+                                center=point[2],
+                                width=point[3],
+                                value=1)
             sectors.append(sector)
 
         for i in reversed(range(1, len(sectors))):
@@ -97,11 +88,11 @@ class ASK(Demodulator):
             right_edge = point1.left_edge
             width = right_edge - left_edge
             center = left_edge + int(width / 2)
-            new_sector = self.__DataSector(left_edge=left_edge,
-                                           right_edge=right_edge,
-                                           center=center,
-                                           width=width,
-                                           value=0)
+            new_sector = DataSector(left_edge=left_edge,
+                                    right_edge=right_edge,
+                                    center=center,
+                                    width=width,
+                                    value=0)
             sectors.insert(i, new_sector)
 
         return sectors
@@ -133,13 +124,13 @@ class ASK(Demodulator):
         calculator = Calculator(Crc8.CCITT)
         crc_check = True
         for packet in range(len(packets)):
-            data_in_packet = packets[packet][1:packet_len+1]
+            data_in_packet = packets[packet][1:packet_len + 1]
 
             for byte in data_in_packet:
                 data.append(byte)
 
             if use_crc:
-                crc_value = packets[packet][packet_len+1]
+                crc_value = packets[packet][packet_len + 1]
                 if not self.__check_crc(packet, calculator, bytearray(data_in_packet), crc_value):
                     crc_check = False
 
