@@ -8,7 +8,7 @@ import os
 from copy import copy
 import shutil
 import numpy as np
-
+import time
 
 from test_utils import create_random_text
 
@@ -102,17 +102,20 @@ class ModemTest(unittest.TestCase):
         out_demod_analysis_name = f"{temp_path}{baudrate}-baudrate_{length}-chars_{modulation}-modulation_demodulate.png"
         
         print("launching modulation...")
-        
-        command = f'python3 {program_path} -a {out_mod_analysis_name} modulate -m {modulation} --i {text} -o {out_wav_name}'.split()
 
+        modulation_time_start = time.time()
+        command = f'python3 {program_path} -a {out_mod_analysis_name} modulate -m {modulation} --i {text} -o {out_wav_name}'.split()
         p = subprocess.Popen(command, shell=False)
         p.wait()
+        modulation_time_end = time.time()
         
         print("launching demodulation...")
-        
+
+        demodulation_time_start = time.time()
         command = f'python3 {program_path} -a {out_demod_analysis_name} demodulate -m {modulation} --i {out_wav_name} -o {out_txt_name}'.split()
         p = subprocess.Popen(command, shell=False)
         p.wait()
+        demodulation_time_end = time.time()
         
         print("comparing modulated data with demodulated...")
 
@@ -123,15 +126,16 @@ class ModemTest(unittest.TestCase):
             print(message)
             failures.append(failure_template(self.MODULATION, length, baudrate, message))
 
-        with open(out_txt_name) as f:
-            try:
-                content = f.read()
-                print(f'original text: "{text}"')
-                print(f'received text: "{content}"')
-            except UnicodeDecodeError:
-                message = "decoding error when reading output file with standard utf-8 text"
-                print(message)
-                failures.append(failure_template(self.MODULATION, length, baudrate, message))
+        if is_file_present:
+            with open(out_txt_name) as f:
+                try:
+                    content = f.read()
+                    print(f'original text: "{text}"')
+                    print(f'received text: "{content}"')
+                except UnicodeDecodeError:
+                    message = "decoding error when reading output file with standard utf-8 text"
+                    print(message)
+                    failures.append(failure_template(self.MODULATION, length, baudrate, message))
 
         if text != content:
             message = "input text does not match with output text"
@@ -142,6 +146,9 @@ class ModemTest(unittest.TestCase):
         else:
 
             print("|PASSED|")
+
+        print(f"modulated in {round(modulation_time_end - modulation_time_start,2)}s")
+        print(f"demodulated in {round(demodulation_time_end - demodulation_time_start, 2)}s")
 
         print("_" * 50)
 

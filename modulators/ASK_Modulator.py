@@ -53,6 +53,11 @@ class ASK(Modulator):
             for x in range(left_band, right_band):
                 samples[x] = samples[x] * one_symbol_amplitude if data[i] == 1 else zero_symbol_amplitude
 
+        # TODO: make better start padding
+        samples = np.insert(samples, 0, [0 for x in range(10000)])
+        times = [t+1 for t in times]
+        times = np.insert(times, 0, [x/10000 for x in range(10000)])
+
         self.logger.info("applying filter...")
 
         apply_filters = True

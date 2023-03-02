@@ -1,58 +1,21 @@
-2023-02-28 13:23:19,880 880ms - (program_core.py:32) - INFO - received app run args: {'command': 'modulate', 'raw': False, 'verbose': True, 'analise': '/home/anon/PROJECTS/python_modem/tests/temp/analysis_mod.png', 'show': True, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/ascii_short', 'output': 'tests/temp/output.wav', 'play': True} 
-2023-02-28 13:23:19,881 881ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
-2023-02-28 13:23:19,881 881ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
-2023-02-28 13:23:19,881 881ms - (program_core.py:247) - DEBUG - content: bytearray(b'sram hujem i cipkom!') 
-2023-02-28 13:23:19,881 881ms - (main.py:15) - INFO - init stage complete! 
-2023-02-28 13:23:19,881 881ms - (processing_hub.py:97) - DEBUG - pre modulation init 
-2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:11) - DEBUG - ASK modulation init 
-2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:17) - DEBUG - ASK modulation started 
-2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:18) - DEBUG - ASK modulation loaded config: '{'sample_rate[Hz]': 44100, 'carrier_frequency[Hz]': 4000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1}' 
-2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:30) - DEBUG - data to modulate: 
-11111111
-01110011
-01110010
-01100001
-01110010
-00000000
-11111111
-01101101
-00100000
-01101000
-11100101
-00000000
-11111111
-01110101
-01101010
-01100101
-11101100
-00000000
-11111111
-01101101
-00100000
-01101001
-11100010
-00000000
-11111111
-00100000
-01100011
-01101001
-10010001
-00000000
-11111111
-01110000
-01101011
-01101111
-00001111
-00000000
-11111111
-01101101
-00100001
-00000000
-11101111
-00000000 
-2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:31) - DEBUG - data length: 336 symbols 
-2023-02-28 13:23:19,881 881ms - (ASK_Modulator.py:39) - DEBUG - modulated data length: 16.8s 
-2023-02-28 13:23:19,952 952ms - (ASK_Modulator.py:56) - INFO - applying filter... 
-2023-02-28 13:23:19,969 969ms - (ASK_Modulator.py:80) - INFO - modulation complete! 
-2023-02-28 13:23:19,969 969ms - (processing_hub.py:113) - INFO - saving modulated data to 'tests/temp/output.wav' 
-2023-02-28 13:23:23,341 341ms - (processing_hub.py:108) - INFO - playing modulated data start 
+2023-03-02 21:59:19,066 066ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': True, 'analise': None, 'show': True, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/temp/output.wav', 'output': 'tests/temp/output.txt'} 
+2023-03-02 21:59:19,066 066ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
+2023-03-02 21:59:19,066 066ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
+2023-03-02 21:59:19,066 066ms - (program_core.py:252) - INFO - opening audio file... 
+2023-03-02 21:59:19,066 066ms - (main.py:15) - INFO - init stage complete! 
+2023-03-02 21:59:19,066 066ms - (processing_hub.py:217) - DEBUG - pre demodulation init 
+2023-03-02 21:59:19,066 066ms - (ASK_Demodulator.py:18) - DEBUG - ASK demodulation init 
+2023-03-02 21:59:19,066 066ms - (ASK_Demodulator.py:42) - DEBUG - ASK demodulation started 
+2023-03-02 21:59:19,066 066ms - (ASK_Demodulator.py:43) - DEBUG - ASK demodulation loaded config: '{}' 
+2023-03-02 21:59:19,066 066ms - (ASK_Demodulator.py:58) - DEBUG - audio length: 0.42s 
+2023-03-02 21:59:19,066 066ms - (ASK_Demodulator.py:59) - DEBUG - found main frequency at: 8000Hz 
+2023-03-02 21:59:19,072 072ms - (ASK_Demodulator.py:268) - DEBUG - crc sum for packet '0' correct! 
+2023-03-02 21:59:19,073 073ms - (ASK_Demodulator.py:268) - DEBUG - crc sum for packet '1' correct! 
+2023-03-02 21:59:19,073 073ms - (ASK_Demodulator.py:268) - DEBUG - crc sum for packet '2' correct! 
+2023-03-02 21:59:19,073 073ms - (ASK_Demodulator.py:271) - ERROR - crc sum for packet '3' is incorrect! received: 36 expected: 9 
+2023-03-02 21:59:19,073 073ms - (ASK_Demodulator.py:71) - CRITICAL - crc failed! 
+2023-03-02 21:59:19,073 073ms - (ASK_Demodulator.py:36) - INFO - message demodulated in 0.01s 
+2023-03-02 21:59:19,073 073ms - (main.py:56) - ERROR - crc check failed! received data is corrupted 
+2023-03-02 21:59:19,073 073ms - (processing_hub.py:169) - INFO - analysing modulated data 
+2023-03-02 21:59:19,269 269ms - (main.py:70) - INFO - showing analysis... 
+2023-03-02 21:59:33,177 177ms - (main.py:74) - DEBUG - exiting with exit code 0 

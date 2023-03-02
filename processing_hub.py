@@ -75,10 +75,11 @@ class ModulatorHub(HUB):
         plot3.set_xlim(xmin=0, xmax=int(modulated_data.sample_rate / 2))
         plot3.set_ylim(ymin=-100, ymax=max(line_y) + 10)
 
-        samples_per_byte = len(modulated_data.samples) / modulated_data.data.getSize()
+        # TODO: make better start padding
+        samples_per_byte = (len(modulated_data.samples) - 10000) / modulated_data.data.getSize()
         for i in range(len(modulated_data.data.getBin())):
-            _min = samples_per_byte * i / modulated_data.sample_rate
-            _max = samples_per_byte * (i + 1) / modulated_data.sample_rate
+            _min = samples_per_byte * i / modulated_data.sample_rate + 1
+            _max = samples_per_byte * (i + 1) / modulated_data.sample_rate + 1
             if modulated_data.data.getBin()[i] == 1:
                 plot2.axvspan(xmin=_min, xmax=_max, ymin=-1, ymax=1, alpha=0.3, color='red')
             else:

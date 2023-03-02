@@ -1,5 +1,7 @@
 import copy
+import time
 
+from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import numpy as np
 import math
@@ -18,7 +20,25 @@ class ASK(Demodulator):
         self.config = config
         self.comm_config = comm_config
 
+    @dataclass
+    class __DataSector:
+        left_edge: int
+        right_edge: int
+        center: int
+        width: int
+        value: int
+
     def demodulate(self, audio: Audio):
+        def wrapper():
+            start_time = time.time()
+            data = self.__demodulate(audio)
+            end_time = time.time()
+            self.logger.info(f"message demodulated in {round(end_time - start_time, 2)}s")
+            return data
+
+        return wrapper()
+
+    def __demodulate(self, audio: Audio):
         self.logger.debug("ASK demodulation started")
         self.logger.debug(f"ASK demodulation loaded config: '{self.config}'")
 
@@ -28,6 +48,10 @@ class ASK(Demodulator):
         audio_length = audio.getAudioLength()
         samples_amount = audio.getSamplesAmount()
         baud_rate = self.comm_config["baud_rate[bps]"]
+        samples_per_bit = int(samples_amount / (baud_rate * audio_length))
+        use_crc = self.comm_config["crc8_sum"]
+        bytes_per_packet = (self.comm_config["packet_len[bytes]"] + 3 if use_crc else 2)
+        packet_len = self.comm_config["packet_len[bytes]"]
 
         main_freq = self.__find_main_frequency(samples, sample_rate, samples_amount)
 
@@ -39,146 +63,108 @@ class ASK(Demodulator):
         samples = signal.medfilt(samples, 5)
         samples = [1 if sample > 0.5 else 0 for sample in samples]
 
-        dividor = 10
+        sectors = self.__samples_to_sectors(samples)
+        packets = self.__sectors_to_packets(sectors, samples_per_bit, bytes_per_packet)
+        data, crc_check = self.__packets_to_data(packets, packet_len, use_crc)
 
-        new_samples = []
-        for idx, sample in enumerate(samples):
-            if idx % dividor == 0:
-                new_samples.append(sample)
-
-        samples = new_samples
-        samples_amount = len(samples)
-        sample_rate = sample_rate / dividor
-        audio_len = samples_amount / sample_rate
-        one_bit_time = 1 / baud_rate
-        samples_per_bit = int(one_bit_time * samples_amount / audio_len)
-
-        packets_start_point = self.__find_starting_sample(samples, samples_per_bit, self.comm_config)
-        #print(packets_start_point)
-
-        bits_in_packet = (self.comm_config["packet_len[bytes]"] + 3 if self.comm_config["crc8_sum"] else 2) * 8
-        samples_per_packet = samples_per_bit * bits_in_packet
-
-        data_packets = []
-        for idx, data_pack_start in enumerate(packets_start_point):
-            data_packets.append(samples[data_pack_start: data_pack_start + samples_per_packet])
-
-        raw_bits = []
-        data = []
-        for packet in data_packets:
-            packet_data = []
-            for i in range(bits_in_packet):
-                try:
-                    bit_value = round(np.average(packet[i*samples_per_bit:i*samples_per_bit+samples_per_bit]))
-                    raw_bits.append(bit_value)
-                    packet_data.append(bit_value)
-                except ValueError:
-                    self.logger.error("data slicing occured")
-                    return DemodulatedData(demodulator=self,
-                               digital_samples=samples,
-                               demodulated_data=bytearray(),
-                               bytes_list=PacketGraphicalInfo([], []),
-                               audio=audio,
-                               crc_check_pass=False)
-            data.append(packet_data)
-
-
-        bytes_list = []
-
-        data_bytes = (self.comm_config["packet_len[bytes]"] + 1 if self.comm_config["crc8_sum"] else 0)
-
-        calculator = Calculator(Crc8.CCITT)
-        crc_check_pass = True
-        packet_n = 0
-        for packet in data:
-            bytes_array = []
-            bits_array = []
-            for bit in packet:
-                bits_array.append(bit)
-                if len(bits_array) == 8:
-                    str_repr = ''.join(str(bit) for bit in bits_array)
-                    bytes_array.append(int(str_repr, 2))
-                    bits_array = []
-
-            packet_data = bytearray(bytes_array[1:data_bytes+0])
-            packet_crc_sum_received = bytes_array[data_bytes]
-
-            packet_crc_sum = calculator.checksum(packet_data)
-
-            if packet_crc_sum == packet_crc_sum_received:
-                self.logger.debug(f"crc sum for packet '{packet_n}' correct!")
-            else:
-                self.logger.error(f"crc sum for packet '{packet_n}' is incorrect! received: {packet_crc_sum} expected: {packet_crc_sum_received}")
-                crc_check_pass = False
-
-            bytes_list.append(bytes_array[1:data_bytes+0])  # #############  add +1 (skipping crc)!!!!!
-            packet_n += 1
-
-        output_bytes = [item for sublist in bytes_list for item in sublist]
-
-        packet_list = []
-        binaries_list = []
-        for start_point in packets_start_point:
-            packet_list.append(start_point)
-            plt.axvline(start_point, color="red")
-
-            for i in range(bits_in_packet):
-                point_left = start_point+(i*samples_per_bit)
-                point_right = start_point+((i+1)*samples_per_bit)
-
-                binaries_list.append(PacketGraphicalInfoSpan(point_left, point_right, raw_bits[0]))
-                raw_bits.pop(0)
-
-        demodulated_data = bytearray(output_bytes)
-        
-        for i in reversed(range(len(demodulated_data))):
-            if demodulated_data[i] == 0:
-                demodulated_data.pop()
-            else:
-                break
+        if not crc_check:
+            self.logger.critical("crc failed!")
 
         return DemodulatedData(demodulator=self,
                                digital_samples=samples,
-                               demodulated_data=demodulated_data,
-                               bytes_list=PacketGraphicalInfo(packet_list, binaries_list),
+                               demodulated_data=data,
+                               bytes_list=PacketGraphicalInfo([], []),
                                audio=audio,
-                               crc_check_pass=crc_check_pass)
+                               crc_check_pass=crc_check)
+
+    def __samples_to_sectors(self, samples):
+        samples = np.array(copy.copy(samples))
+        centers, plateaus = signal.find_peaks(samples, plateau_size=1)
+
+        sectors = []
+        for point in zip(plateaus["left_edges"], plateaus["right_edges"], centers, plateaus["plateau_sizes"]):
+            sector = self.__DataSector(left_edge=point[0],
+                                       right_edge=point[1],
+                                       center=point[2],
+                                       width=point[3],
+                                       value=1)
+            sectors.append(sector)
+
+        for i in reversed(range(1, len(sectors))):
+            point1 = sectors[i]
+            point2 = sectors[i - 1]
+            left_edge = point2.right_edge
+            right_edge = point1.left_edge
+            width = right_edge - left_edge
+            center = left_edge + int(width / 2)
+            new_sector = self.__DataSector(left_edge=left_edge,
+                                           right_edge=right_edge,
+                                           center=center,
+                                           width=width,
+                                           value=0)
+            sectors.insert(i, new_sector)
+
+        return sectors
+
+    def __sectors_to_packets(self, sectors, samples_per_bit, bytes_per_packet):
+
+        bits_list = []
+        for sector in sectors:
+            bits_amount = round(sector.width / samples_per_bit)
+            for x in range(bits_amount):
+                bits_list.append(sector.value)
+
+        bytes_list = [bits_list[i * 8:i * 8 + 8] for i in range(round(len(bits_list) / 8))]
+
+        packets_list = [bytes_list[i * bytes_per_packet:i * bytes_per_packet + bytes_per_packet] for i in
+                        range(round(len(bytes_list) / bytes_per_packet))]
+
+        return self.__replace_bits_with_byte_in_packets(packets_list)
 
     @staticmethod
-    def __find_starting_sample(samples, samples_per_bit, comm_config):
+    def __replace_bits_with_byte_in_packets(packets):
+        for packet in range(len(packets)):
+            for byte in range(len(packets[packet])):
+                packets[packet][byte] = int(''.join([str(bit) for bit in packets[packet][byte]]), 2)
+        return packets
 
-        start_byte = '{0:08b}'.format(comm_config["start_byte"])
-        start_pattern = []
-        for _byte in start_byte:
-            for x in range(samples_per_bit):
-                start_pattern.append(int(_byte))
+    def __packets_to_data(self, packets, packet_len, use_crc):
+        data = bytearray()
+        calculator = Calculator(Crc8.CCITT)
+        crc_check = True
+        for packet in range(len(packets)):
+            data_in_packet = packets[packet][1:packet_len+1]
 
-        signalshifted = [float(x) - 0.5 for x in samples]
-        syncA = [float(x) - 0.5 for x in start_pattern]
+            for byte in data_in_packet:
+                data.append(byte)
 
-        peaks = [(0, 0)]
-        mindistance = len(start_pattern) * (comm_config["packet_len[bytes]"] + 3 if comm_config["crc8_sum"] else 2) - len(start_pattern)
+            if use_crc:
+                crc_value = packets[packet][packet_len+1]
+                if not self.__check_crc(packet, calculator, bytearray(data_in_packet), crc_value):
+                    crc_check = False
 
-        for i in range(len(samples) - len(syncA)):
-            corr = np.dot(syncA, signalshifted[i: i + len(syncA)])
+        data = self.__remove_null_from_data(data)
 
-            # if previous peak is too far, keep it and add this value to the
-            # list as a new peak
-            if i - peaks[-1][0] > mindistance:
-                peaks.append((i, corr))
+        return data, crc_check
 
-            # else if this value is bigger than the previous maximum, set this
-            # one
-            elif corr > peaks[-1][1]:
-                peaks[-1] = (i, corr)
+    def __check_crc(self, packet_n, calculator, value, crc):
+        value_crc = calculator.checksum(value)
+        if value_crc == crc:
+            self.logger.debug(f"crc sum for packet '{packet_n}' correct!")
+            return True
+        else:
+            self.logger.error(f"crc sum for packet '{packet_n}' is incorrect! received: {value_crc} expected: {crc}")
+            return False
 
-        start_peaks = []
-        for i in range(len(peaks)):
-            if peaks[i][1] > 0:
-                start_peaks.append(peaks[i][0])
-
-        return start_peaks
-
+    @staticmethod
+    def __remove_null_from_data(data):
+        data = data
+        for i in reversed(range(len(data))):
+            if data[i] == 0:
+                data.pop()
+            else:
+                break
+        return data
 
     @staticmethod
     def __find_main_frequency(samples, sample_rate, samples_amount):

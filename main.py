@@ -24,7 +24,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     -v demodulate -m ASK --i "/PROJECTS/python_modem/tests/output.wav" -o "tests/output.bin"
     -v demodulate -m ASK --i "/PROJECTS/python_modem/tests/output_noisy.wav" -o "tests/output.bin"
     
-    python3 main.py -v -a "/home/anon/PROJECTS/python_modem/tests/temp/analysis_mod.png" -s modulate -m ASK --i "/home/anon/PROJECTS/python_modem/tests/ascii_short" -o "tests/temp/output.wav" -p
+    python3 main.py -v -a "/home/anon/PROJECTS/python_modem/tests/temp/analysis_mod.png" -s modulate -m ASK --i "abcdefg" -o "tests/temp/output.wav" -p
     python3 main.py -v -a "/home/anon/PROJECTS/python_modem/tests/temp/analysis_demod.png" -s demodulate -m ASK --i "/home/anon/PROJECTS/python_modem/tests/temp/output.wav" -o "tests/temp/output.txt"
     
     """
