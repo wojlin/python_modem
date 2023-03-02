@@ -80,7 +80,7 @@ class DemodulatedData:
     demodulator: Demodulator
     digital_samples: list
     demodulated_data: bytearray
-    bytes_list: List[DataSector]
+    bits_analysis: List[DataSector]
     audio: Audio
     crc_check_pass: bool
 

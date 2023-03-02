@@ -79,7 +79,7 @@ class ModulatorHub(HUB):
         start_silence_samples = start_silence * 1000
 
         end_silence = modulated_data.config["silence_at_end[s]"]
-        end_silence_samples = start_silence * 1000
+        end_silence_samples = end_silence * 1000
 
         samples_per_byte = (len(modulated_data.samples) - start_silence_samples - end_silence_samples) / modulated_data.data.getSize()
         for i in range(len(modulated_data.data.getBin())):
@@ -192,7 +192,7 @@ class DemodulatorHub(HUB):
         plot2.step([x for x in range(len(demodulated_data.digital_samples))], demodulated_data.digital_samples, color="black")
         plot2.fill_between([x for x in range(len(demodulated_data.digital_samples))], demodulated_data.digital_samples,
                            step="pre", alpha=1, color='black')
-        for point in demodulated_data.bytes_list:
+        for point in demodulated_data.bits_analysis:
             plot2.axvspan(point.left_edge, point.right_edge, color="red" if point.value == 1 else "blue", alpha=0.3)
             half_width = point.width/4
             pos = point.left_edge + half_width

@@ -51,11 +51,11 @@ class ASK(Demodulator):
 
         samples = self.__apply_filters(samples, main_freq, sample_rate)
         samples = np.abs(signal.hilbert(samples))
-        samples = signal.medfilt(samples, 5)
+        samples = signal.medfilt(samples, 1)
         samples = [1 if sample > 0.5 else 0 for sample in samples]
 
         sectors = self.__samples_to_sectors(samples)
-        packets = self.__sectors_to_packets(sectors, samples_per_bit, bytes_per_packet)
+        packets, bits_analysis = self.__sectors_to_packets(sectors, samples_per_bit, bytes_per_packet)
         data, crc_check = self.__packets_to_data(packets, packet_len, use_crc)
 
         if not crc_check:
@@ -64,7 +64,7 @@ class ASK(Demodulator):
         return DemodulatedData(demodulator=self,
                                digital_samples=samples,
                                demodulated_data=data,
-                               bytes_list=sectors,
+                               bits_analysis=bits_analysis,
                                audio=audio,
                                crc_check_pass=crc_check)
 
@@ -98,19 +98,32 @@ class ASK(Demodulator):
         return sectors
 
     def __sectors_to_packets(self, sectors, samples_per_bit, bytes_per_packet):
-
+        bits_data = []
         bits_list = []
         for sector in sectors:
             bits_amount = round(sector.width / samples_per_bit)
             for x in range(bits_amount):
                 bits_list.append(sector.value)
 
+                left_edge = sector.left_edge+(samples_per_bit*x)
+                right_edge = sector.left_edge + (samples_per_bit * (x+1))
+                width = right_edge - left_edge
+                value = sector.value
+                center = int(left_edge + (width / 2))
+                bit_data = DataSector(left_edge=left_edge,
+                                      right_edge=right_edge,
+                                      width=width,
+                                      value=value,
+                                      center=center)
+
+                bits_data.append(bit_data)
+
         bytes_list = [bits_list[i * 8:i * 8 + 8] for i in range(round(len(bits_list) / 8))]
 
         packets_list = [bytes_list[i * bytes_per_packet:i * bytes_per_packet + bytes_per_packet] for i in
                         range(round(len(bytes_list) / bytes_per_packet))]
 
-        return self.__replace_bits_with_byte_in_packets(packets_list)
+        return self.__replace_bits_with_byte_in_packets(packets_list), bits_data
 
     @staticmethod
     def __replace_bits_with_byte_in_packets(packets):

@@ -165,6 +165,7 @@ class ModemTest(unittest.TestCase):
         else:
             raise unittest.SkipTest("not enabled in test config")
 
+    
     def test_advanced(self):
         run = self.TEST_CONFIG["advanced_test"]["run"]
         if run:
@@ -173,7 +174,10 @@ class ModemTest(unittest.TestCase):
                 length = 10
                 print(f"running test with baudrate of '{baudrate}'")
                 with self.subTest("baudrate"):
-                    failures.append(self.length_check(10, self.MODULATION, baudrate))
+                    fails = self.length_check(length, self.MODULATION, baudrate)
+                    if fails:
+                        failures.append(fails)
+            print(failures)
             self.assertEqual(0, len(failures))
         else:
             raise unittest.SkipTest("not enabled in test config")
