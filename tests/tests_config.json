@@ -5,17 +5,19 @@
     "baudrate": 20,
     "length": 10
   },
-  "advanced_test": {
-    "run": true,
+  "multiple_test": {
+    "run_short": true,
+    "run_normal": true,
+    "run_long": true,
     "baudrate_test_range": {
-      "min": 10,
+      "min": 100,
       "max": 1000,
-      "amount": 10
-    },
-    "length_test_range": {
-      "min": 5,
-      "max": 100,
       "amount": 5
+    },
+    "length_test_char_amount": {
+      "short": 10,
+      "normal": 100,
+      "long": 1000
     }
   }
 }

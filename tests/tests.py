@@ -17,7 +17,7 @@ class ModemTest(unittest.TestCase):
     BAUDRATE = 30
 
     BAUDRATES = []
-    LENGTHS = []
+    LENGTHS = {}
 
     TEST_PATH = ""
     TEMP_PATH = ""
@@ -39,19 +39,15 @@ class ModemTest(unittest.TestCase):
 
 
 
-        min_baud = cls.TEST_CONFIG["advanced_test"]["baudrate_test_range"]["min"]
-        max_baud = cls.TEST_CONFIG["advanced_test"]["baudrate_test_range"]["max"]
-        amount = cls.TEST_CONFIG["advanced_test"]["baudrate_test_range"]["amount"]
+        min_baud = cls.TEST_CONFIG["multiple_test"]["baudrate_test_range"]["min"]
+        max_baud = cls.TEST_CONFIG["multiple_test"]["baudrate_test_range"]["max"]
+        amount = cls.TEST_CONFIG["multiple_test"]["baudrate_test_range"]["amount"]
         cls.BAUDRATES = np.linspace(min_baud, max_baud, num=amount, dtype=int).tolist()
 
-
-        min_length = cls.TEST_CONFIG["advanced_test"]["length_test_range"]["min"]
-        max_length = cls.TEST_CONFIG["advanced_test"]["length_test_range"]["max"]
-        amount = cls.TEST_CONFIG["advanced_test"]["length_test_range"]["amount"]
-        cls.LENGTHS = np.linspace(min_length, max_length, num=amount, dtype=int).tolist()
-
-
-
+        short = cls.TEST_CONFIG["multiple_test"]["length_test_char_amount"]["short"]
+        normal = cls.TEST_CONFIG["multiple_test"]["length_test_char_amount"]["normal"]
+        long = cls.TEST_CONFIG["multiple_test"]["length_test_char_amount"]["long"]
+        cls.LENGTHS = {"short": short, "normal": normal, "long": long}
 
         path = cls.TEMP_PATH
         if path != "":
@@ -165,13 +161,22 @@ class ModemTest(unittest.TestCase):
         else:
             raise unittest.SkipTest("not enabled in test config")
 
-    
-    def test_advanced(self):
-        run = self.TEST_CONFIG["advanced_test"]["run"]
+    def test_multiple_for_short_messages(self):
+        run = self.TEST_CONFIG["multiple_test"]["run_short"]
+        self.__advanced_test(self.LENGTHS["short"], run)
+
+    def test_multiple_for_normal_messages(self):
+        run = self.TEST_CONFIG["multiple_test"]["run_normal"]
+        self.__advanced_test(self.LENGTHS["normal"], run)
+
+    def test_multiple_for_long_messages(self):
+        run = self.TEST_CONFIG["multiple_test"]["run_long"]
+        self.__advanced_test(self.LENGTHS["long"], run)
+
+    def __advanced_test(self, length, run):
         if run:
             failures = []
             for baudrate in self.BAUDRATES:
-                length = 10
                 print(f"running test with baudrate of '{baudrate}'")
                 with self.subTest("baudrate"):
                     fails = self.length_check(length, self.MODULATION, baudrate)
