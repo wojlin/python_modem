@@ -1,9 +1,10 @@
 from typing import Sequence, Optional
 from matplotlib import pyplot as plt
+import pickle
 
-from processing_hub import ModulatorHub, DemodulatorHub
-from program_core import program_core
-from utils import ModulatedData, DemodulatedData
+from deeper_code.processing_hub import ModulatorHub, DemodulatorHub
+from deeper_code.program_core import program_core
+from deeper_code.utils import ModulatedData, DemodulatedData
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -28,11 +29,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     python3 main.py -v -a "/home/anon/PROJECTS/python_modem/tests/temp/analysis_demod.png" -s demodulate -m ASK --i "/home/anon/PROJECTS/python_modem/tests/temp/output.wav" -o "tests/temp/output.txt"
     
     """
+    data_to_write = None
 
     if command == "modulate":
         hub = ModulatorHub(logger=logger, processing_type="Modulator", processing_mode=processing_mode)
         binary_encoded_data = hub.encode_data(data.data)
         modulated_data: ModulatedData = hub.modulate(binary_encoded_data, data.modulators[processing_mode])
+        data_to_write = modulated_data
 
         if data.args["output"]:
             hub.save(modulated_data, data.args["output"])
@@ -46,8 +49,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     elif command == "demodulate":
         hub = DemodulatorHub(logger=logger, processing_type="Demodulator", processing_mode=processing_mode)
         demodulated_data: DemodulatedData = hub.demodulate(data.data, data.demodulators[processing_mode])
+        data_to_write = demodulated_data
         if demodulated_data.crc_check_pass:
-            logger.info(f"demodulated data: '{demodulated_data.demodulated_data.decode()}'")
+            try:
+                logger.info(f"demodulated data: '{demodulated_data.demodulated_data.decode()}'")
+            except UnicodeDecodeError:
+                logger.info("demodulated data is binary")
 
             if data.args["output"]:
                 hub.save(demodulated_data, data.args["output"])
@@ -64,6 +71,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     if data.args["analise"]:
         logger.info(f"saving analysis to '{data.args['analise']}'")
+        pickle_path = f"{'.'.join(str(data.args['analise']).split('.')[:-1])}.pickle"
+        print(pickle_path)
+
+        with open(pickle_path, 'wb') as file:
+            pickle.dump(data_to_write, file)
+
         plt.savefig(data.args["analise"])
 
     if data.args["show"]:

@@ -1,7 +1,7 @@
 {
-    "baud_rate[bps]": 120,
+    "baud_rate[bps]": 2000,
     "start_byte": 255,
     "stop_byte": 128,
-    "packet_len[bytes]": 3,
+    "packet_len[bytes]": 5,
     "crc8_sum": true
 }

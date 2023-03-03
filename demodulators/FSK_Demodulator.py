@@ -1,4 +1,4 @@
-from interfaces import Demodulator
+from deeper_code.interfaces import Demodulator
 
 
 class FSK(Demodulator):

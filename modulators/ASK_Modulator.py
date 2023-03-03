@@ -1,9 +1,9 @@
-from scipy.signal import butter, lfilter, freqz, filtfilt
+from scipy.signal import butter, filtfilt
 import numpy as np
 import sys
 
-from utils import Binary
-from interfaces import Modulator
+from deeper_code.utils import Binary
+from deeper_code.interfaces import Modulator
 
 
 class ASK(Modulator):

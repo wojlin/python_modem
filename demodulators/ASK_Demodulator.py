@@ -1,15 +1,12 @@
 import copy
 import time
 
-from dataclasses import dataclass
-import matplotlib.pyplot as plt
 import numpy as np
-import math
 from scipy import signal
 from crc import Calculator, Crc8
 
-from interfaces import Demodulator
-from utils import Audio, DemodulatedData, DataSector
+from deeper_code.interfaces import Demodulator
+from deeper_code.utils import Audio, DemodulatedData, DataSector
 
 
 class ASK(Demodulator):

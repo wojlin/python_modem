@@ -1,22 +1,22 @@
-2023-03-02 23:21:33,408 408ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': True, 'analise': '/home/anon/PROJECTS/python_modem/tests/temp/analysis_demod.png', 'show': True, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/temp/output.wav', 'output': 'tests/temp/output.txt'} 
-2023-03-02 23:21:33,408 408ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
-2023-03-02 23:21:33,409 409ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
-2023-03-02 23:21:33,409 409ms - (program_core.py:252) - INFO - opening audio file... 
-2023-03-02 23:21:33,409 409ms - (main.py:15) - INFO - init stage complete! 
-2023-03-02 23:21:33,409 409ms - (processing_hub.py:219) - DEBUG - pre demodulation init 
-2023-03-02 23:21:33,409 409ms - (ASK_Demodulator.py:17) - DEBUG - ASK demodulation init 
-2023-03-02 23:21:33,409 409ms - (ASK_Demodulator.py:33) - DEBUG - ASK demodulation started 
-2023-03-02 23:21:33,409 409ms - (ASK_Demodulator.py:34) - DEBUG - ASK demodulation loaded config: '{}' 
-2023-03-02 23:21:33,409 409ms - (ASK_Demodulator.py:49) - DEBUG - audio length: 0.2s 
-2023-03-02 23:21:33,409 409ms - (ASK_Demodulator.py:50) - DEBUG - found main frequency at: 2000Hz 
-2023-03-02 23:21:33,413 413ms - (ASK_Demodulator.py:157) - DEBUG - crc sum for packet '0' correct! 
-2023-03-02 23:21:33,413 413ms - (ASK_Demodulator.py:157) - DEBUG - crc sum for packet '1' correct! 
-2023-03-02 23:21:33,413 413ms - (ASK_Demodulator.py:157) - DEBUG - crc sum for packet '2' correct! 
-2023-03-02 23:21:33,413 413ms - (ASK_Demodulator.py:157) - DEBUG - crc sum for packet '3' correct! 
-2023-03-02 23:21:33,413 413ms - (ASK_Demodulator.py:27) - INFO - message demodulated in 0.0s 
-2023-03-02 23:21:33,413 413ms - (main.py:50) - INFO - demodulated data: 'ECPU POLSKA' 
-2023-03-02 23:21:33,413 413ms - (processing_hub.py:224) - INFO - saving demodulated data to 'tests/temp/output.txt' 
-2023-03-02 23:21:33,413 413ms - (processing_hub.py:174) - INFO - analysing modulated data 
-2023-03-02 23:21:33,654 654ms - (main.py:66) - INFO - saving analysis to '/home/anon/PROJECTS/python_modem/tests/temp/analysis_demod.png' 
-2023-03-02 23:21:33,916 916ms - (main.py:70) - INFO - showing analysis... 
-2023-03-02 23:26:02,697 697ms - (main.py:74) - DEBUG - exiting with exit code 0 
+2023-03-03 20:33:12,897 897ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': True, 'analise': '/home/anon/PROJECTS/python_modem/tests/temp/analysis_demod.png', 'show': True, 'mode': 'ASK', 'input': '/home/anon/PROJECTS/python_modem/tests/temp/output.wav', 'output': 'tests/temp/output.txt'} 
+2023-03-03 20:33:12,897 897ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
+2023-03-03 20:33:12,897 897ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
+2023-03-03 20:33:12,897 897ms - (program_core.py:252) - INFO - opening audio file... 
+2023-03-03 20:33:12,898 898ms - (main.py:16) - INFO - init stage complete! 
+2023-03-03 20:33:12,898 898ms - (processing_hub.py:219) - DEBUG - pre demodulation init 
+2023-03-03 20:33:12,898 898ms - (ASK_Demodulator.py:17) - DEBUG - ASK demodulation init 
+2023-03-03 20:33:12,898 898ms - (ASK_Demodulator.py:33) - DEBUG - ASK demodulation started 
+2023-03-03 20:33:12,898 898ms - (ASK_Demodulator.py:34) - DEBUG - ASK demodulation loaded config: '{}' 
+2023-03-03 20:33:12,899 899ms - (ASK_Demodulator.py:49) - DEBUG - audio length: 0.16s 
+2023-03-03 20:33:12,899 899ms - (ASK_Demodulator.py:50) - DEBUG - found main frequency at: 14999Hz 
+2023-03-03 20:33:12,902 902ms - (ASK_Demodulator.py:157) - DEBUG - crc sum for packet '0' correct! 
+2023-03-03 20:33:12,902 902ms - (ASK_Demodulator.py:157) - DEBUG - crc sum for packet '1' correct! 
+2023-03-03 20:33:12,902 902ms - (ASK_Demodulator.py:157) - DEBUG - crc sum for packet '2' correct! 
+2023-03-03 20:33:12,902 902ms - (ASK_Demodulator.py:157) - DEBUG - crc sum for packet '3' correct! 
+2023-03-03 20:33:12,903 903ms - (ASK_Demodulator.py:157) - DEBUG - crc sum for packet '4' correct! 
+2023-03-03 20:33:12,903 903ms - (ASK_Demodulator.py:27) - INFO - message demodulated in 0.0s 
+2023-03-03 20:33:12,903 903ms - (main.py:55) - INFO - demodulated data: 'zażółć geślą jaźń' 
+2023-03-03 20:33:12,903 903ms - (processing_hub.py:224) - INFO - saving demodulated data to 'tests/temp/output.txt' 
+2023-03-03 20:33:12,903 903ms - (processing_hub.py:174) - INFO - analysing modulated data 
+2023-03-03 20:33:13,207 207ms - (main.py:73) - INFO - saving analysis to '/home/anon/PROJECTS/python_modem/tests/temp/analysis_demod.png' 
+2023-03-03 20:33:13,589 589ms - (main.py:83) - INFO - showing analysis... 

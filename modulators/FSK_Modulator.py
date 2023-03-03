@@ -1,4 +1,4 @@
-from interfaces import Modulator
+from deeper_code.interfaces import Modulator
 
 
 class FSK(Modulator):
