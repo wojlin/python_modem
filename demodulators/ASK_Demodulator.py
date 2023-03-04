@@ -46,9 +46,9 @@ class ASK(Demodulator):
         self.logger.debug(f"audio length: {round(audio_length, 2)}s")
         self.logger.debug(f"found main frequency at: {int(main_freq)}Hz")
 
-        samples = self.__apply_filters(samples, main_freq, sample_rate)
+        #samples = self.__apply_filters(samples, main_freq, sample_rate)
         samples = np.abs(signal.hilbert(samples))
-        samples = signal.medfilt(samples, 1)
+        #samples = signal.medfilt(samples, 5)
         samples = [1 if sample > 0.5 else 0 for sample in samples]
 
         sectors = self.__samples_to_sectors(samples)
@@ -130,23 +130,27 @@ class ASK(Demodulator):
         return packets
 
     def __packets_to_data(self, packets, packet_len, use_crc):
-        data = bytearray()
-        calculator = Calculator(Crc8.CCITT)
-        crc_check = True
-        for packet in range(len(packets)):
-            data_in_packet = packets[packet][1:packet_len + 1]
+        try:
+            data = bytearray()
+            calculator = Calculator(Crc8.CCITT)
+            crc_check = True
+            for packet in range(len(packets)):
+                data_in_packet = packets[packet][1:packet_len + 1]
 
-            for byte in data_in_packet:
-                data.append(byte)
+                for byte in data_in_packet:
+                    data.append(byte)
 
-            if use_crc:
-                crc_value = packets[packet][packet_len + 1]
-                if not self.__check_crc(packet, calculator, bytearray(data_in_packet), crc_value):
-                    crc_check = False
+                if use_crc:
+                    crc_value = packets[packet][packet_len + 1]
+                    if not self.__check_crc(packet, calculator, bytearray(data_in_packet), crc_value):
+                        crc_check = False
 
-        data = self.__remove_null_from_data(data)
+            data = self.__remove_null_from_data(data)
 
-        return data, crc_check
+            return data, crc_check
+        except Exception:
+            self.logger.error("failed to decode bytes from samples")
+            return [], False
 
     def __check_crc(self, packet_n, calculator, value, crc):
         value_crc = calculator.checksum(value)

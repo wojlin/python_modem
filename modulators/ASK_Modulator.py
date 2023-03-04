@@ -66,7 +66,7 @@ class ASK(Modulator):
 
         self.logger.info("applying filter...")
 
-        apply_filters = False
+        apply_filters = True
 
         if apply_filters:
             offset = 100

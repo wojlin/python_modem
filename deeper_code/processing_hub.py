@@ -170,7 +170,7 @@ class ModulatorHub(HUB):
 class DemodulatorHub(HUB):
 
     def analise_demodulated_data(self, demodulated_data:DemodulatedData):
-        self.logger.info("analysing modulated data")
+        self.logger.info("analysing demodulated data")
 
         fig = plt.gcf()
         fig.set_size_inches(17, 8)
