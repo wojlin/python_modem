@@ -1,3 +1,5 @@
 {
-
+  "apply_frequency_cut": false,
+  "apply_filters": false,
+  "one_symbol_amplitude": 0.5
 }

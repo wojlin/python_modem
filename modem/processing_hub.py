@@ -8,8 +8,8 @@ import copy
 import wave
 import os
 
-from deeper_code.interfaces import Modulator, Demodulator
-from deeper_code.utils import load_config, DemodulatedData, ModulatedData, Audio, Binary
+from modem.interfaces import Modulator, Demodulator
+from modem.utils import load_config, DemodulatedData, ModulatedData, Audio, Binary
 
 class HUB:
     def __init__(self, logger, processing_type, processing_mode):

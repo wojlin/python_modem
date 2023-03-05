@@ -9,8 +9,8 @@ import wave
 import sys
 import os
 
-from deeper_code.interfaces import Modulator, Demodulator
-from deeper_code.utils import Binary, Audio
+from modem.interfaces import Modulator, Demodulator
+from modem.utils import Binary, Audio
 
 
 @dataclass

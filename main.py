@@ -2,9 +2,9 @@ from typing import Sequence, Optional
 from matplotlib import pyplot as plt
 import pickle
 
-from deeper_code.processing_hub import ModulatorHub, DemodulatorHub
-from deeper_code.program_core import program_core
-from deeper_code.utils import ModulatedData, DemodulatedData
+from modem.processing_hub import ModulatorHub, DemodulatorHub
+from modem.program_core import program_core
+from modem.utils import ModulatedData, DemodulatedData
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:

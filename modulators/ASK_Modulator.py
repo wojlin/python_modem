@@ -2,8 +2,8 @@ from scipy.signal import butter, filtfilt
 import numpy as np
 import sys
 
-from deeper_code.utils import Binary
-from deeper_code.interfaces import Modulator
+from modem.utils import Binary
+from modem.interfaces import Modulator
 
 
 class ASK(Modulator):

@@ -6,9 +6,9 @@ import pickle
 import sys
 import os
 
-import deeper_code.utils
-from deeper_code.utils import DemodulatedData, ModulatedData
-from deeper_code.processing_hub import DemodulatorHub, ModulatorHub
+import modem.utils
+from modem.utils import DemodulatedData, ModulatedData
+from modem.processing_hub import DemodulatorHub, ModulatorHub
 
 def configure_logging():
     logger = logging.getLogger("analise")
@@ -53,13 +53,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         logger.critical(f"'{filepath}'file does not exist!")
         raise FileNotFoundError(f"'{filepath}'file does not exist!")
 
-    if type(pickled_data) == deeper_code.utils.DemodulatedData:
+    if type(pickled_data) == modem.utils.DemodulatedData:
         logger.info("launching demodulation analysis...")
         processing_mode = pickled_data.demodulator.__class__.__name__
         logger.info(f"detected modulation type: {processing_mode}")
         hub = DemodulatorHub(logger, processing_type="Demodulator", processing_mode=processing_mode)
         hub.analise_demodulated_data(pickled_data)
-    elif type(pickled_data) == deeper_code.utils.ModulatedData:
+    elif type(pickled_data) == modem.utils.ModulatedData:
         logger.info("launching modulation analysis...")
         processing_mode = pickled_data.modulator.__class__.__name__
         logger.info(f"detected modulation type: {processing_mode}")

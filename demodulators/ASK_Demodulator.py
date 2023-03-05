@@ -1,12 +1,12 @@
 import copy
 import time
-
+import math
 import numpy as np
 from scipy import signal
 from crc import Calculator, Crc8
 
-from deeper_code.interfaces import Demodulator
-from deeper_code.utils import Audio, DemodulatedData, DataSector
+from modem.interfaces import Demodulator
+from modem.utils import Audio, DemodulatedData, DataSector
 
 
 class ASK(Demodulator):
@@ -46,10 +46,12 @@ class ASK(Demodulator):
         self.logger.debug(f"audio length: {round(audio_length, 2)}s")
         self.logger.debug(f"found main frequency at: {int(main_freq)}Hz")
 
-        #samples = self.__apply_filters(samples, main_freq, sample_rate)
+        if self.config["apply_frequency_cut"]:
+            samples = self.__apply_filters(samples, main_freq, sample_rate)
         samples = np.abs(signal.hilbert(samples))
-        #samples = signal.medfilt(samples, 5)
-        samples = [1 if sample > 0.5 else 0 for sample in samples]
+        if self.config["apply_filters"]:
+            samples = signal.medfilt(samples, 5)
+        samples = [1 if sample > self.config["one_symbol_amplitude"] else 0 for sample in samples]
 
         sectors = self.__samples_to_sectors(samples)
         packets, bits_analysis = self.__sectors_to_packets(sectors, samples_per_bit, bytes_per_packet)
@@ -99,6 +101,7 @@ class ASK(Demodulator):
         bits_list = []
         for sector in sectors:
             bits_amount = round(sector.width / samples_per_bit)
+            bits_amount = 1 if bits_amount == 0 else bits_amount
             for x in range(bits_amount):
                 bits_list.append(sector.value)
 

@@ -1,4 +1,4 @@
-from deeper_code.interfaces import Demodulator
+from modem.interfaces import Demodulator
 
 
 class FSK(Demodulator):

@@ -11,7 +11,7 @@
     "run_long": true,
     "baudrate_test_range": {
       "min": 100,
-      "max": 1000,
+      "max": 2500,
       "amount": 5
     },
     "length_test_char_amount": {

@@ -2,7 +2,7 @@ from typing import List
 from dataclasses import dataclass
 import json
 
-from deeper_code.interfaces import Modulator, Demodulator
+from modem.interfaces import Modulator, Demodulator
 
 
 class Binary:
