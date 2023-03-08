@@ -23,11 +23,11 @@ class core_data:
 
 
 class program_core:
-    def __init__(self, argv):
+    def __init__(self, argv, logs_name, logs_path):
         self.__modulators = self.__load_package(Modulator)
         self.__demodulators = self.__load_package(Demodulator)
         self.__args = self.__parse_args(argv, self.__modulators, self.__demodulators)
-        self.__logger = self.__configure_logging(self.__args)
+        self.__logger = self.__configure_logging(self.__args, logs_name, logs_path)
 
         self.__logger.info(f"received app run args: {self.__args}")
         self.__logger.info(f"loaded modulators: {', '.join([mod for mod, cls in self.__modulators.items()])}")
@@ -65,27 +65,21 @@ class program_core:
             formatter = logging.Formatter(log_fmt)
             return formatter.format(record)
 
-    def __configure_logging(self, args: dict) -> logging.Logger:
+    def __configure_logging(self, args: dict, logs_name, logs_path) -> logging.Logger:
         """
         this method configures logging
         :param args: dict of parsed args from parse_args method
         :return:
         """
-        log_path = "../log.txt"
+        log_path = logs_path
         level = logging.DEBUG if args["verbose"] else logging.INFO
         level = logging.CRITICAL if args["raw"] else level
-
-        """logging.basicConfig(filename=log_path,
-                            filemode="w",
-                            format="%(asctime)s %(msecs)03dms - (%(filename)s:%(lineno)d) - %(levelname)s - %(message)s ",
-                            level=level)
-        logging.info("python modem")"""
 
         fileh = logging.FileHandler(log_path, 'w')
         formatter = logging.Formatter('%(asctime)s %(msecs)03dms - (%(filename)s:%(lineno)d) - %(levelname)s - %(message)s ')
         fileh.setFormatter(formatter)
 
-        logger = logging.getLogger("python_modem")
+        logger = logging.getLogger(logs_name)
 
         for hdlr in logger.handlers[:]:  # remove all old handlers
             logger.removeHandler(hdlr)

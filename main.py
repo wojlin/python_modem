@@ -8,7 +8,7 @@ from modem.utils import ModulatedData, DemodulatedData
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
-    core = program_core(argv)
+    core = program_core(argv, "python_modem", "../modem_logs.txt")
     data = core.getData()
 
     logger = data.logger

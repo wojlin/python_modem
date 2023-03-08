@@ -66,7 +66,7 @@ class ModemTest(unittest.TestCase):
         with open(self.COMM_CONFIG_PATH, 'w') as f:
             f.write(json.dumps(self.comm_config, sort_keys=False, indent=4))
 
-    def length_check(self, length, modulation, baudrate):
+    def length_check(self, length, modulation, baudrate, analise: bool = True):
 
         failures = []
 
@@ -100,7 +100,11 @@ class ModemTest(unittest.TestCase):
         print("launching modulation...")
 
         modulation_time_start = time.time()
-        command = f'python3 {program_path} -a {out_mod_analysis_name} modulate -m {modulation} --i {text} -o {out_wav_name}'.split()
+        if analise:
+            command = f'python3 {program_path} -a {out_mod_analysis_name} modulate -m {modulation} --i {text} -o {out_wav_name}'.split()
+        else:
+            command = f'python3 {program_path} modulate -m {modulation} --i {text} -o {out_wav_name}'.split()
+
         p = subprocess.Popen(command, shell=False)
         p.wait()
         modulation_time_end = time.time()
@@ -108,7 +112,11 @@ class ModemTest(unittest.TestCase):
         print("launching demodulation...")
 
         demodulation_time_start = time.time()
-        command = f'python3 {program_path} -a {out_demod_analysis_name} demodulate -m {modulation} --i {out_wav_name} -o {out_txt_name}'.split()
+        if analise:
+            command = f'python3 {program_path} -a {out_demod_analysis_name} demodulate -m {modulation} --i {out_wav_name} -o {out_txt_name}'.split()
+        else:
+            command = f'python3 {program_path} demodulate -m {modulation} --i {out_wav_name} -o {out_txt_name}'.split()
+
         p = subprocess.Popen(command, shell=False)
         p.wait()
         demodulation_time_end = time.time()
@@ -157,6 +165,18 @@ class ModemTest(unittest.TestCase):
             length = self.TEST_CONFIG["basic_test"]["length"]
 
             failures = self.length_check(length, self.MODULATION, baudrate)
+            self.assertEqual(0, len(failures))
+        else:
+            raise unittest.SkipTest("not enabled in test config")
+
+
+    def test_basic_speed(self):
+        run = self.TEST_CONFIG["basic_test"]["run"]
+        if run:
+            baudrate = self.TEST_CONFIG["basic_test"]["baudrate"]
+            length = self.TEST_CONFIG["basic_test"]["length"]
+
+            failures = self.length_check(length, self.MODULATION, baudrate, analise=False)
             self.assertEqual(0, len(failures))
         else:
             raise unittest.SkipTest("not enabled in test config")

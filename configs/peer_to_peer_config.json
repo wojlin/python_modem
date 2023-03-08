@@ -1,0 +1,8 @@
+{
+  "recording_options":
+  {
+    "sample_rate": 44100,
+    "samples_per_chunk": 512,
+    "packet_length_seconds": 5
+  }
+}
