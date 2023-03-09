@@ -1,7 +1,7 @@
 import curses
 
 class UI:
-    def __init__(self, stdscr, userlist_width=16):
+    def __init__(self, stdscr: curses.window, userlist_width=16):
         curses.use_default_colors()
         for i in range(0, curses.COLORS):
             curses.init_pair(i, i, -1)
@@ -97,6 +97,20 @@ class UI:
         self.redraw_chatbuffer()
         self.redraw_chatline()
         self.win_chatline.cursyncup()
+
+    def add_incoming_message(self, msg):
+        self.chatbuffer.append(msg)
+        self._linebuffer_add(msg)
+        self.redraw_chatbuffer()
+        h, w = self.win_chatline.getmaxyx()
+
+        start = len(self.inputbuffer) - w + 1
+        if start < 0:
+            start = 0
+        self.win_chatline.addstr(0, 0, self.inputbuffer[start:])
+        self.win_chatline.refresh()
+
+
 
     def _linebuffer_add(self, msg):
         h, w = self.stdscr.getmaxyx()

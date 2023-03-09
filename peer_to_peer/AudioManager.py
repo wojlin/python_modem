@@ -58,12 +58,11 @@ class AudioManager:
             self.__chunks.pop(0)
 
     def listen(self):
-        while True:
-            if self.__can_record:
-                chunk = self.__record_chunk()
-                self.__chunks.append(chunk)
-            else:
-                self.__logger.error("recording setup is not configured")
+        if self.__can_record:
+            chunk = self.__record_chunk()
+            self.__chunks.append(chunk)
+        else:
+            self.__logger.error("recording setup is not configured")
 
     def __record_chunk(self):
         frames = np.empty(shape=1)
