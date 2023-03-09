@@ -5,6 +5,7 @@ from typing import List
 import pyaudio
 import wave
 from copy import copy, deepcopy
+import numpy as np
 
 from peer_to_peer.utils import Config
 
@@ -43,32 +44,34 @@ class AudioManager:
 
     def can_record(self):
         return self.__can_record
+
     def get_chunks(self):
-        return deepcopy(self.__chunks)
+        return self.__chunks
+    def get_chunks_length(self):
+        return len(self.__chunks)
 
     def get_chunk(self, i):
-        return copy(self.__chunks[i])
+        return deepcopy(self.__chunks[i])
 
     def delete_first_chunk(self):
         if len(self.__chunks):
-            self.__chunks = self.__chunks.pop(0)
+            self.__chunks.pop(0)
 
     def listen(self):
         while True:
             if self.__can_record:
                 chunk = self.__record_chunk()
+                self.__chunks.append(chunk)
             else:
                 self.__logger.error("recording setup is not configured")
 
     def __record_chunk(self):
-        frames = []
-
+        frames = np.empty(shape=1)
+        self.__logger.debug("recording chunk...")
         for i in range(0, int(self.__RATE / self.__CHUNK * self.__RECORD_SECONDS)):
-            data = self.__stream.read(self.__CHUNK)
-            frames.append(data)
-
-        return [item for sublist in frames for item in sublist]
-
+            data = np.frombuffer(self.__stream.read(self.__CHUNK), dtype=np.int16)
+            frames = np.append(frames, data)
+        return frames
 
     def get_audio_input_devices(self) -> List[AudioDevice]:
         audio_devices = []

@@ -1,6 +1,9 @@
+import curses
 import logging
+import time
 from typing import Sequence, Optional, List
-
+from curses import wrapper
+from peer_to_peer.UI import UI
 from threading import Thread
 
 from peer_to_peer.AudioManager import AudioManager, AudioDevice
@@ -15,10 +18,12 @@ class PeerToPeerHub:
         self.__modulation_type = None
         self.__logger = configure_logging(logs_path="peer_to_peer_com.log", logs_name="peer to peer")
         self.__peer_config = None
-        self.__audio_manager = None
+        self.__audio_manager: Optional[AudioManager] = None
 
         self.__launched_app = False
 
+    def get_user_id(self):
+        return self.__user_id
     def get_logger(self):
         return self.__logger
     def update_verbosity(self, verbose: bool):
@@ -43,7 +48,7 @@ class PeerToPeerHub:
         self.__audio_manager = AudioManager(self.__logger, self.__peer_config)
         return {"status": "done"}
 
-    def get_audio_devices(self):
+    def get_audio_devices(self) -> dict:
         if self.__audio_manager is None:
             return {"status": "error", "message": "peer config needs to be set first"}
 
@@ -88,15 +93,33 @@ class PeerToPeerHub:
             return {"status": "error", "message": "audio devices needs to be set before launching app"}
 
         print("launching app...")
-        Thread(target=self.__listen).start()
+        Thread(target=self.__receive_listen).start()
+        Thread(target=self.__analise_packets).start()
         self.__launched_app = True
 
         return {"status": "done"}
 
-    def __listen(self):
+    def __analise_packets(self):
+        data_packets = []
+        while True:
+            if self.__audio_manager.get_chunks_length():
+                packet = self.__audio_manager.get_chunk(0)
+                contain_data = True
+                if contain_data:
+                    data_packets.append(packet)
+                    
+                self.__audio_manager.delete_first_chunk()
+
+    def __receive_listen(self):
         self.__audio_manager.listen()
 
-def main(argv: Optional[Sequence[str]] = None) -> int:
+    def transmit_message(self, message):
+        print(message)
+
+
+def main(stdscr) -> int:
+    stdscr.clear()
+    ui = UI(stdscr)
 
     hub = PeerToPeerHub()
 
@@ -140,15 +163,25 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         status = hub.set_audio_devices(input_device, output_device)
         print(status)
 
-
-
-
     status = hub.start_app()
     print(status)
+
+    ui.userlist.append(hub.get_user_id())
+    ui.redraw_userlist()
+    inp = ""
+    while inp != "/quit":
+        inp = ui.wait_input()
+        ui.chatbuffer_add(inp)
+
+    print("xD")
 
     return 0
 
 
 if __name__ == "__main__":
-    exit(main())
+    try:
+        exit(wrapper(main))
+    except curses.error:
+        print("this app needs to be launched in normal terminal not code editor one!")
+        exit(1)
 
