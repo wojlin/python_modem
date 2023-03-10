@@ -85,3 +85,7 @@ def configure_logging(logs_path, logs_name) -> logging.Logger:
     logger.addHandler(ch)
 
     return logger
+
+
+
+

@@ -13,8 +13,16 @@ from peer_to_peer.utils import Config, setup_config, configure_logging, setup_au
 import json
 import os
 from ctypes import *
+
+import signal
+import sys
+
 class PeerToPeerHub:
     def __init__(self, stdscr: curses.window):
+
+        signal.signal(signal.SIGINT, self.quit_program)
+        #signal.pause()
+
         self.stdscr = stdscr
 
         stdscr.clear()
@@ -30,10 +38,14 @@ class PeerToPeerHub:
         self.__threads: Optional[List[Thread]] = []
         self.__event = Event()
 
+        self.__messages_to_send = []
+
     def get_user_id(self):
         return self.__user_id
+
     def get_logger(self):
         return self.__logger
+
     def update_verbosity(self, verbose: bool):
         self.__logger.setLevel(logging.DEBUG) if verbose else self.__logger.setLevel(logging.ERROR)
         level = logging.DEBUG if verbose else logging.ERROR
@@ -101,15 +113,16 @@ class PeerToPeerHub:
             return {"status": "error", "message": "audio devices needs to be set before launching app"}
 
         print("launching app...")
-        self.__threads.append(Thread(target=self.__receive_listen))
-        self.__threads.append(Thread(target=self.__analise_packets))
+        self.__threads.append(Thread(target=self.__record_thread, name="recording thread"))
+        self.__threads.append(Thread(target=self.__decode_thread, name="decoding thread"))
+        self.__threads.append(Thread(target=self.__transmit_thread, name="transmitting thread"))
         for thread in self.__threads:
             thread.start()
         self.__launched_app = True
 
         return {"status": "done"}
 
-    def __analise_packets(self):
+    def __decode_thread(self):
         data_packets = []
         while True:
             if self.__event.is_set():
@@ -123,21 +136,32 @@ class PeerToPeerHub:
                     
                 self.__audio_manager.delete_first_chunk()
 
-    def __receive_listen(self):
+    def __record_thread(self):
         while True:
             if self.__event.is_set():
                 break
             self.__audio_manager.listen()
 
+    def __transmit_thread(self):
+        while True:
+            if self.__event.is_set():
+                break
+            if len(self.__messages_to_send):
+                self.ui.chatbuffer_add(self.__messages_to_send[0])
+                self.__messages_to_send.pop(0)
+
     def transmit_message(self, message):
         if message == "/quit":
             self.quit_program()
-        self.ui.chatbuffer_add(message)
+        else:
+            self.__messages_to_send.append(message)
 
-    def quit_program(self):
+
+    def quit_program(self, sig = None, frame = None):
         curses.endwin()
+        print("closing program")
         for thread in self.__threads:
-            print(f"joining {thread}")
+            print(f"closing '{thread.name}' thread")
             self.__event.set()
             thread.join()
         print("ending")
