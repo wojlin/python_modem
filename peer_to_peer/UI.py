@@ -1,12 +1,14 @@
 import curses
+from typing import List
+from peer_to_peer.utils import User
 
 class UI:
-    def __init__(self, stdscr: curses.window, userlist_width=25):
+    def __init__(self, stdscr: curses.window, user, userlist_width=25):
         curses.use_default_colors()
         for i in range(0, curses.COLORS):
             curses.init_pair(i + 1, i, -1)
         self.stdscr = stdscr
-        self.userlist = []
+        self.userlist = [user]
         self.inputbuffer = ""
         self.linebuffer = []
         self.chatbuffer = []
@@ -14,8 +16,8 @@ class UI:
         # Curses, why must you confuse me with your height, width, y, x
         userlist_hwyx = (curses.LINES - 6, userlist_width - 1, 1, 1)
         chatbuffer_hwyx = (curses.LINES - 6, curses.COLS - userlist_width - 4, 1, userlist_width + 2)
-        commandbuffer_hwyx = (1, curses.COLS - 3, curses.LINES - 4, 1)
-        chatline_hwyx = (1, curses.COLS - 3, curses.LINES - 2, 1)
+        commandbuffer_hwyx = (1, curses.COLS - 6, curses.LINES - 4, 1)
+        chatline_hwyx = (1, curses.COLS - 5, curses.LINES - 2, 1)
 
         self.win_userlist = stdscr.derwin(*userlist_hwyx)
         self.win_chatline = stdscr.derwin(*chatline_hwyx)
@@ -72,7 +74,7 @@ class UI:
             self.stdscr.addstr(h - 3, x, "-")
         for x in range(0, w):
             self.stdscr.addstr(0, x, "═")
-        for x in range(1, w-2):
+        for x in range(1, w-1):
             self.stdscr.addstr(h - 1, x, "═")
         self.stdscr.addstr(h-5, u_w+1, "╩")
         self.stdscr.addstr(h - 5, 0, "╠")
@@ -81,7 +83,15 @@ class UI:
         self.stdscr.addstr(h-1, 0, "╚")
         self.stdscr.addstr(0, w - 1, "╗")
         self.stdscr.addstr(0, u_w+1, "╦")
-        self.stdscr.addstr(h-1, w - 2 , "╝")
+
+        try:
+            #screen.addch(mlines, mcols, 'c')
+            self.stdscr.addch(h - 1, w - 1, "╝")
+            #self.stdscr.addstr(h - 1, w - 1, "╝")
+        except curses.error as e:
+            pass
+
+
         #self.stdscr.vline(0, u_w + 1, "\U0001F332", h - 6)
         #self.stdscr.hline(h - 6, 0, "=", w)
         #self.stdscr.hline(h - 2, 0, "-", w)
@@ -100,8 +110,9 @@ class UI:
                     "2": {"command": "/userping", "info": "pings a user specifed in parameter"},
                     "3": {"command": "/pingall", "info": "pings all users"}}
 
-        current_offset = 1
+        """current_offset = 1
         self.win_commandline.addstr(0, current_offset, "Commands:")
+        self.win_commandline.scrollok(True)
         current_offset += 11
         for name, command in commands.items():
             com_w = len(command["command"])
@@ -113,7 +124,22 @@ class UI:
             self.win_commandline.addstr(0, current_offset, command["info"], curses.color_pair(243))
             current_offset += com_i_w
             self.win_commandline.addstr(0, current_offset + 1, " | ")
-            current_offset += 5
+            current_offset += 5"""
+
+        message = "Commands: "
+
+        purple = "\033[0;35m"
+        end = "\033[0m"
+        for name, command in commands.items():
+            message += purple + command["command"] + end
+            message += " - "
+            message += command["info"]
+            message += " | "
+        #print(message)
+        length = 150
+
+        self.win_commandline.addstr(0, 1, message)
+
         self.win_commandline.refresh()
 
 
@@ -132,11 +158,12 @@ class UI:
         """Redraw the userlist"""
         self.win_userlist.clear()
         h, w = self.win_userlist.getmaxyx()
-        for i, name in enumerate(self.userlist):
+        for i, user in enumerate(self.userlist):
             if i >= h:
                 break
             # name = name.ljust(w - 1) + "|"
-            self.win_userlist.addstr(i, 0, name[:w - 1])
+            #print(i, user, user.user_name)
+            self.win_userlist.addstr(i, 0, user.user_name)
         self.win_userlist.refresh()
 
     def redraw_chatbuffer(self):
@@ -160,9 +187,10 @@ class UI:
         """
         self.chatbuffer.append(msg)
         self._linebuffer_add(msg)
-        self.redraw_chatbuffer()
-        self.redraw_chatline()
-        #self.win_chatline.cursyncup()
+        #self.redraw_chatbuffer()
+        #self.redraw_chatline()
+        self.redraw_ui()
+        self.win_chatline.cursyncup()
 
     def add_incoming_message(self, msg):
         self.chatbuffer.append(msg)

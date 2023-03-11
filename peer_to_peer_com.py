@@ -9,10 +9,11 @@ from threading import Thread, Event
 
 from peer_to_peer.AudioManager import AudioManager, AudioDevice
 
-from peer_to_peer.utils import Config, setup_config, configure_logging, setup_audio_devices
+from peer_to_peer.utils import Config, setup_config, configure_logging, setup_audio_devices, User
 import json
 import os
 from ctypes import *
+import uuid
 
 import signal
 import sys
@@ -23,10 +24,14 @@ class PeerToPeerHub:
         signal.signal(signal.SIGINT, self.quit_program)
         #signal.pause()
 
-        self.stdscr = stdscr
+        self.__stdscr = stdscr
 
-        stdscr.clear()
-        self.ui = UI(stdscr)
+
+
+
+
+        self.__user = None
+        self.ui = None
         self.__user_id = None
         self.__modulation_type = None
         self.__logger = configure_logging(logs_path="peer_to_peer_com.log", logs_name="peer to peer")
@@ -118,7 +123,15 @@ class PeerToPeerHub:
         self.__threads.append(Thread(target=self.__transmit_thread, name="transmitting thread"))
         for thread in self.__threads:
             thread.start()
+
         self.__launched_app = True
+
+        mac = uuid.uuid4().hex
+        self.__user = User(self.__user_id, mac, True)
+        self.__stdscr.clear()
+        self.ui = UI(self.__stdscr, self.__user)
+
+
 
         return {"status": "done"}
 
@@ -215,10 +228,7 @@ def main():
         print(status)
 
     status = hub.start_app()
-    print(status)
-
-    hub.ui.userlist.append(hub.get_user_id())
-    hub.ui.redraw_userlist()
+    #print(status)
 
     while True:
         message = hub.ui.wait_input()

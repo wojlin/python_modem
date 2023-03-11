@@ -36,6 +36,12 @@ class Config:
     verbose: bool
     peer_config: dict
 
+@dataclass
+class User:
+    user_name: str
+    mac_addr: str
+    online: bool
+
 class __CustomFormatter(logging.Formatter):
 
     grey = "\x1b[38;20m"
