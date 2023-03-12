@@ -18,6 +18,8 @@ class UI:
         self.initial_offset = 0
         self.reached_start = True
         self.reached_end = False
+
+        self.current_pos = 0
         # Curses, why must you confuse me with your height, width, y, x
         userlist_hwyx = (curses.LINES - 6, userlist_width - 1, 1, 1)
         chatbuffer_hwyx = (curses.LINES - 6, curses.COLS - userlist_width - 4, 1, userlist_width + 2)
@@ -127,22 +129,6 @@ class UI:
                     "2": {"command": "/userping", "info": "pings a user specifed in parameter"},
                     "3": {"command": "/pingall", "info": "pings all users"}}
 
-        """current_offset = 1
-        self.win_commandline.addstr(0, current_offset, "Commands:")
-        self.win_commandline.scrollok(True)
-        current_offset += 11
-        for name, command in commands.items():
-            com_w = len(command["command"])
-            self.win_commandline.addstr(0, current_offset, command["command"], curses.color_pair(208))
-            current_offset += com_w
-            self.win_commandline.addstr(0, current_offset, " - ", curses.color_pair(249))
-            current_offset += 3
-            com_i_w = len(command["info"])
-            self.win_commandline.addstr(0, current_offset, command["info"], curses.color_pair(243))
-            current_offset += com_i_w
-            self.win_commandline.addstr(0, current_offset + 1, " | ")
-            current_offset += 5"""
-
         current_offset = 1
         message = "Commands: "
         self.win_commandline.addstr(0, current_offset, message)
@@ -210,24 +196,10 @@ class UI:
                 self.reached_end = False
 
 
-
-
-
-
-
-        """purple = "\033[0;35m"
-        end = "\033[0m"
-        for name, command in commands.items():
-            message += purple + command["command"] + end
-            message += " - "
-            message += command["info"]
-            message += " | "
-        #print(message)
-        length = 150
-
-        self.win_commandline.addstr(0, 1, message)"""
-
+        self.win_chatline.addstr(0, self.current_pos + 11, "█")
+        self.win_chatline.refresh()
         self.win_commandline.refresh()
+
 
 
     def redraw_chatline(self):
@@ -332,6 +304,7 @@ class UI:
             if last == ord('\n'):
                 tmp = self.inputbuffer
                 self.inputbuffer = ""
+                self.current_pos = 0
                 self.redraw_chatline()
                 self.win_chatline.cursyncup()
                 return tmp[len(prompt):]
@@ -342,4 +315,5 @@ class UI:
                 self.resize()
             elif 32 <= last <= 126:
                 self.inputbuffer += chr(last)
+                self.current_pos += 1
             self.redraw_chatline()
