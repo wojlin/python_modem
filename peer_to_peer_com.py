@@ -41,7 +41,7 @@ class PeerToPeerHub:
         self.__launched_app = False
 
         self.__threads: Optional[List[Thread]] = []
-        self.__event = Event()
+        self.event = Event()
 
         self.__messages_to_send = []
 
@@ -126,10 +126,9 @@ class PeerToPeerHub:
 
         self.__launched_app = True
 
-        mac = uuid.uuid4().hex
-        self.__user = User(self.__user_id, mac, True)
+        self.__user = User(self.__user_id, True)
         self.__stdscr.clear()
-        self.ui = UI(self.__stdscr, self.__user)
+        self.ui = UI(self, self.__stdscr, self.__user)
 
 
 
@@ -138,7 +137,7 @@ class PeerToPeerHub:
     def __decode_thread(self):
         data_packets = []
         while True:
-            if self.__event.is_set():
+            if self.event.is_set():
                 break
             if self.__audio_manager.get_chunks_length():
                 packet = self.__audio_manager.get_chunk(0)
@@ -151,13 +150,13 @@ class PeerToPeerHub:
 
     def __record_thread(self):
         while True:
-            if self.__event.is_set():
+            if self.event.is_set():
                 break
             self.__audio_manager.listen()
 
     def __transmit_thread(self):
         while True:
-            if self.__event.is_set():
+            if self.event.is_set():
                 break
             if len(self.__messages_to_send):
                 self.ui.chatbuffer_add(self.__messages_to_send[0])
@@ -175,7 +174,7 @@ class PeerToPeerHub:
         print("closing program")
         for thread in self.__threads:
             print(f"closing '{thread.name}' thread")
-            self.__event.set()
+            self.event.set()
             thread.join()
         print("ending")
         sys.exit(0)

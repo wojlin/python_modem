@@ -39,7 +39,6 @@ class Config:
 @dataclass
 class User:
     user_name: str
-    mac_addr: str
     online: bool
 
 class __CustomFormatter(logging.Formatter):

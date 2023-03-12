@@ -1,18 +1,23 @@
 import curses
+import time
 from typing import List
 from peer_to_peer.utils import User
-
+from threading import Thread
 class UI:
-    def __init__(self, stdscr: curses.window, user, userlist_width=25):
+    def __init__(self,peer_to_peer, stdscr: curses.window, user, userlist_width=25):
         curses.use_default_colors()
         for i in range(0, curses.COLORS):
             curses.init_pair(i + 1, i, -1)
+        self.peer_to_peer = peer_to_peer
         self.stdscr = stdscr
         self.userlist = [user]
         self.inputbuffer = ""
         self.linebuffer = []
         self.chatbuffer = []
 
+        self.initial_offset = 0
+        self.reached_start = True
+        self.reached_end = False
         # Curses, why must you confuse me with your height, width, y, x
         userlist_hwyx = (curses.LINES - 6, userlist_width - 1, 1, 1)
         chatbuffer_hwyx = (curses.LINES - 6, curses.COLS - userlist_width - 4, 1, userlist_width + 2)
@@ -24,7 +29,18 @@ class UI:
         self.win_chatbuffer = stdscr.derwin(*chatbuffer_hwyx)
         self.win_commandline = stdscr.derwin(*commandbuffer_hwyx)
 
+        self.command_offset = 0
+
         self.redraw_ui()
+
+        Thread(target=self.move_commands).start()
+
+    def move_commands(self):
+        while True:
+            if self.peer_to_peer.event.is_set():
+                break
+            self.redraw_commandline()
+            time.sleep(0.25)
 
     def resize(self):
         #self.redraw_ui()
@@ -53,6 +69,7 @@ class UI:
 
     def redraw_ui(self):
         """Redraws the entire UI"""
+
         h, w = self.stdscr.getmaxyx()
         u_h, u_w = self.win_userlist.getmaxyx()
         self.stdscr.clear()
@@ -126,9 +143,79 @@ class UI:
             self.win_commandline.addstr(0, current_offset + 1, " | ")
             current_offset += 5"""
 
+        current_offset = 1
         message = "Commands: "
+        self.win_commandline.addstr(0, current_offset, message)
+        current_offset += len(message)
 
-        purple = "\033[0;35m"
+        initial_offset = current_offset + self.command_offset
+
+        max_width = w - 2
+
+        if initial_offset < 0:
+            self.reached_start = True
+
+        for name, command in commands.items():
+
+            for char in command["command"]:
+                if initial_offset > 0:
+                    initial_offset -= 1
+                    continue
+                if current_offset > max_width:
+                    break
+                self.win_commandline.addstr(0, current_offset, char, curses.color_pair(208))
+                current_offset += 1
+
+            for char in " - ":
+                if initial_offset > 0:
+                    initial_offset -= 1
+                    continue
+                if current_offset > max_width:
+                    break
+                self.win_commandline.addstr(0, current_offset, char, curses.color_pair(249))
+                current_offset += 1
+
+            for char in command["info"] :
+                if initial_offset > 0:
+                    initial_offset -= 1
+                    continue
+                if current_offset > max_width:
+                    break
+                self.win_commandline.addstr(0, current_offset, char, curses.color_pair(243))
+                current_offset += 1
+
+            for char in " | ":
+                if initial_offset > 0:
+                    initial_offset -= 1
+                    continue
+                if current_offset > max_width:
+                    break
+                self.win_commandline.addstr(0, current_offset, char)
+                current_offset += 1
+
+        if current_offset <= initial_offset:
+            self.command_offset += 1
+
+        if self.reached_start:
+            self.command_offset += 1
+            if current_offset < max_width:
+                self.reached_end = True
+                self.reached_start = False
+
+
+        elif self.reached_end:
+            self.command_offset -= 1
+            if current_offset <= initial_offset:
+                self.reached_start = True
+                self.reached_end = False
+
+
+
+
+
+
+
+        """purple = "\033[0;35m"
         end = "\033[0m"
         for name, command in commands.items():
             message += purple + command["command"] + end
@@ -138,7 +225,7 @@ class UI:
         #print(message)
         length = 150
 
-        self.win_commandline.addstr(0, 1, message)
+        self.win_commandline.addstr(0, 1, message)"""
 
         self.win_commandline.refresh()
 
@@ -156,6 +243,7 @@ class UI:
 
     def redraw_userlist(self):
         """Redraw the userlist"""
+        max_user_len = 10
         self.win_userlist.clear()
         h, w = self.win_userlist.getmaxyx()
         for i, user in enumerate(self.userlist):
@@ -163,7 +251,11 @@ class UI:
                 break
             # name = name.ljust(w - 1) + "|"
             #print(i, user, user.user_name)
-            self.win_userlist.addstr(i, 0, user.user_name)
+            offset = 1
+            self.win_userlist.addstr(i, offset, "🟢")
+            offset += 4
+            name = user.user_name[:max_user_len] if len(user.user_name) > max_user_len else user.user_name
+            self.win_userlist.addstr(i, offset, name)
         self.win_userlist.refresh()
 
     def redraw_chatbuffer(self):
