@@ -12,21 +12,19 @@ from modem.interfaces import Modulator, Demodulator
 from modem.utils import load_config, DemodulatedData, ModulatedData, Audio, Binary
 
 class HUB:
-    def __init__(self, logger, processing_type, processing_mode):
+    def __init__(self, logger, processing_type):
         self.logger = logger
         self.processing_type = processing_type
-        self.processing_mode = processing_mode
-        self.config = self.find_processing_config()
         self.dir_name = '/'.join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
         self.comm_config = load_config(f"{self.dir_name}/configs/communication_config.json")
 
-    def find_processing_config(self):
+    def find_processing_config(self, processing_mode):
         self.dir_name = '/'.join(os.path.dirname(os.path.realpath(__file__)).split('/')[:-1])
-        config_path = f"{self.dir_name}/configs/{self.processing_mode}_{self.processing_type}.json"
+        config_path = f"{self.dir_name}/configs/{processing_mode}_{self.processing_type}.json"
         is_file = os.path.isfile(config_path)
         if not is_file:
             config = None
-            self.logger.critical(f"'{config_path}' config for {self.processing_mode} {self.processing_type} not found")
+            self.logger.critical(f"'{config_path}' config for {self.processing_type} not found")
             raise FileNotFoundError(f"{config_path} not exist")
         else:
             config = load_config(config_path)
@@ -100,10 +98,10 @@ class ModulatorHub(HUB):
 
     def modulate(self, input_binary: Binary, modulator_type: type(Modulator)):
         self.logger.debug("pre modulation init")
-
-        modulator = modulator_type(self.logger, self.config, self.comm_config)
+        config = self.find_processing_config(modulator_type.__name__)
+        modulator = modulator_type(self.logger, config, self.comm_config)
         times, samples, sample_rate, class_name = modulator.modulate(input_binary)
-        return ModulatedData(class_name, self.config, times, samples, sample_rate, input_binary)
+        return ModulatedData(class_name, config, times, samples, sample_rate, input_binary)
 
     def play(self, modulated_data: ModulatedData):
         if len(modulated_data.samples) == 0:
@@ -111,7 +109,9 @@ class ModulatorHub(HUB):
             return
 
         self.logger.info("playing modulated data start")
+        print("play start")
         sd.play(modulated_data.samples, modulated_data.sample_rate, blocking=True)
+        print("play end")
         self.logger.info("playing modulated data end")
 
     def save(self, modulated_data: ModulatedData, filepath):
@@ -216,7 +216,8 @@ class DemodulatorHub(HUB):
 
     def demodulate(self, audio: Audio, demodulator_type: type(Demodulator)):
         self.logger.debug("pre demodulation init")
-        demodulator = demodulator_type(self.logger, self.config, self.comm_config)
+        config = self.find_processing_config(demodulator_type.__name__)
+        demodulator = demodulator_type(self.logger, config, self.comm_config)
         return demodulator.demodulate(audio)
 
     def save(self, demodulated_data: DemodulatedData, filepath):

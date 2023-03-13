@@ -1,2 +1,118 @@
-2023-03-12 02:11:22,657 657ms - (peer_to_peer_com.py:225) - DEBUG - input device: 20      output device: 20 
-2023-03-12 02:11:22,669 669ms - (AudioManager.py:69) - DEBUG - recording chunk... 
+2023-03-13 13:58:38,439 439ms - (peer_to_peer_com.py:260) - DEBUG - input device: 14      output device: 14 
+2023-03-13 13:58:40,358 358ms - (processing_hub.py:100) - DEBUG - pre modulation init 
+2023-03-13 13:58:40,421 421ms - (ASK_Modulator.py:11) - DEBUG - ASK modulation init 
+2023-03-13 13:58:40,436 436ms - (ASK_Modulator.py:17) - DEBUG - ASK modulation started 
+2023-03-13 13:58:40,452 452ms - (ASK_Modulator.py:18) - DEBUG - ASK modulation loaded config: '{'sample_rate[Hz]': 44100, 'carrier_frequency[Hz]': 3000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1, 'silence_at_start[s]': 0.1, 'silence_at_end[s]': 0.1}' 
+2023-03-13 13:58:40,452 452ms - (ASK_Modulator.py:32) - DEBUG - data to modulate: 
+11111111
+01110100
+01100101
+01110011
+01110100
+00000000
+00100110
+10000000 
+2023-03-13 13:58:40,452 452ms - (ASK_Modulator.py:33) - DEBUG - data length: 64 symbols 
+2023-03-13 13:58:40,452 452ms - (ASK_Modulator.py:41) - DEBUG - modulated data length: 0.64s 
+2023-03-13 13:58:40,549 549ms - (ASK_Modulator.py:67) - INFO - applying filter... 
+2023-03-13 13:58:40,678 678ms - (ASK_Modulator.py:91) - INFO - modulation complete! 
+2023-03-13 13:59:01,461 461ms - (processing_hub.py:100) - DEBUG - pre modulation init 
+2023-03-13 13:59:01,590 590ms - (ASK_Modulator.py:11) - DEBUG - ASK modulation init 
+2023-03-13 13:59:01,600 600ms - (ASK_Modulator.py:17) - DEBUG - ASK modulation started 
+2023-03-13 13:59:01,605 605ms - (ASK_Modulator.py:18) - DEBUG - ASK modulation loaded config: '{'sample_rate[Hz]': 44100, 'carrier_frequency[Hz]': 3000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1, 'silence_at_start[s]': 0.1, 'silence_at_end[s]': 0.1}' 
+2023-03-13 13:59:01,611 611ms - (ASK_Modulator.py:32) - DEBUG - data to modulate: 
+11111111
+01101000
+01100101
+01101100
+01101100
+01101111
+10010010
+10000000
+11111111
+00100000
+01010111
+01101111
+01110010
+01101100
+11110011
+10000000
+11111111
+01100100
+00100000
+01111000
+01000100
+00000000
+11010100
+10000000 
+2023-03-13 13:59:01,611 611ms - (ASK_Modulator.py:33) - DEBUG - data length: 192 symbols 
+2023-03-13 13:59:01,616 616ms - (ASK_Modulator.py:41) - DEBUG - modulated data length: 1.92s 
+2023-03-13 13:59:01,763 763ms - (ASK_Modulator.py:67) - INFO - applying filter... 
+2023-03-13 13:59:01,902 902ms - (ASK_Modulator.py:91) - INFO - modulation complete! 
+2023-03-13 14:00:18,692 692ms - (processing_hub.py:100) - DEBUG - pre modulation init 
+2023-03-13 14:00:18,728 728ms - (ASK_Modulator.py:11) - DEBUG - ASK modulation init 
+2023-03-13 14:00:18,733 733ms - (ASK_Modulator.py:17) - DEBUG - ASK modulation started 
+2023-03-13 14:00:18,733 733ms - (ASK_Modulator.py:18) - DEBUG - ASK modulation loaded config: '{'sample_rate[Hz]': 44100, 'carrier_frequency[Hz]': 3000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1, 'silence_at_start[s]': 0.1, 'silence_at_end[s]': 0.1}' 
+2023-03-13 14:00:18,738 738ms - (ASK_Modulator.py:32) - DEBUG - data to modulate: 
+11111111
+01101000
+01100101
+01101100
+01101100
+01101111
+10010010
+10000000
+11111111
+00100000
+01110111
+01101111
+01110010
+01101100
+00111101
+10000000
+11111111
+01100100
+00000000
+00000000
+00000000
+00000000
+00100011
+10000000 
+2023-03-13 14:00:18,749 749ms - (ASK_Modulator.py:33) - DEBUG - data length: 192 symbols 
+2023-03-13 14:00:18,749 749ms - (ASK_Modulator.py:41) - DEBUG - modulated data length: 1.92s 
+2023-03-13 14:00:18,916 916ms - (ASK_Modulator.py:67) - INFO - applying filter... 
+2023-03-13 14:00:18,983 983ms - (ASK_Modulator.py:91) - INFO - modulation complete! 
+2023-03-13 14:00:50,935 935ms - (processing_hub.py:100) - DEBUG - pre modulation init 
+2023-03-13 14:00:50,972 972ms - (ASK_Modulator.py:11) - DEBUG - ASK modulation init 
+2023-03-13 14:00:50,972 972ms - (ASK_Modulator.py:17) - DEBUG - ASK modulation started 
+2023-03-13 14:00:50,988 988ms - (ASK_Modulator.py:18) - DEBUG - ASK modulation loaded config: '{'sample_rate[Hz]': 44100, 'carrier_frequency[Hz]': 3000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1, 'silence_at_start[s]': 0.1, 'silence_at_end[s]': 0.1}' 
+2023-03-13 14:00:50,988 988ms - (ASK_Modulator.py:32) - DEBUG - data to modulate: 
+11111111
+01101000
+01100101
+01101100
+01101100
+01101111
+10010010
+10000000 
+2023-03-13 14:00:51,003 003ms - (ASK_Modulator.py:33) - DEBUG - data length: 64 symbols 
+2023-03-13 14:00:51,004 004ms - (ASK_Modulator.py:41) - DEBUG - modulated data length: 0.64s 
+2023-03-13 14:00:51,117 117ms - (ASK_Modulator.py:67) - INFO - applying filter... 
+2023-03-13 14:00:51,224 224ms - (ASK_Modulator.py:91) - INFO - modulation complete! 
+2023-03-13 14:04:09,267 267ms - (processing_hub.py:100) - DEBUG - pre modulation init 
+2023-03-13 14:04:09,293 293ms - (ASK_Modulator.py:11) - DEBUG - ASK modulation init 
+2023-03-13 14:04:09,294 294ms - (ASK_Modulator.py:17) - DEBUG - ASK modulation started 
+2023-03-13 14:04:09,294 294ms - (ASK_Modulator.py:18) - DEBUG - ASK modulation loaded config: '{'sample_rate[Hz]': 44100, 'carrier_frequency[Hz]': 3000, 'one_symbol_amplitude': 1.0, 'zero_symbol_amplitude': 0.1, 'silence_at_start[s]': 0.1, 'silence_at_end[s]': 0.1}' 
+2023-03-13 14:04:09,294 294ms - (ASK_Modulator.py:32) - DEBUG - data to modulate: 
+11111111
+01110100
+01100101
+01110011
+01110100
+00000000
+00100110
+10000000 
+2023-03-13 14:04:09,294 294ms - (ASK_Modulator.py:33) - DEBUG - data length: 64 symbols 
+2023-03-13 14:04:09,304 304ms - (ASK_Modulator.py:41) - DEBUG - modulated data length: 0.64s 
+2023-03-13 14:04:09,350 350ms - (ASK_Modulator.py:67) - INFO - applying filter... 
+2023-03-13 14:04:09,426 426ms - (ASK_Modulator.py:91) - INFO - modulation complete! 

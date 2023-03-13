@@ -1,5 +1,5 @@
 {
-    "baud_rate[bps]": 100,
+    "baud_rate[bps]": 20,
     "start_byte": 255,
     "stop_byte": 128,
     "packet_len[bytes]": 5,

@@ -15,6 +15,8 @@ class UI:
         self.linebuffer = []
         self.chatbuffer = []
 
+        curses.curs_set(0)
+
         self.initial_offset = 0
         self.reached_start = True
         self.reached_end = False
@@ -196,7 +198,7 @@ class UI:
                 self.reached_end = False
 
 
-        self.win_chatline.addstr(0, self.current_pos + 11, "█")
+        #self.win_chatline.addstr(0, self.current_pos + 11, "█")
         self.win_chatline.refresh()
         self.win_commandline.refresh()
 

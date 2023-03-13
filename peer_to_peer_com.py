@@ -6,9 +6,11 @@ from typing import Sequence, Optional, List
 from curses import wrapper
 from peer_to_peer.UI import UI
 from threading import Thread, Event
+import inspect
+from glob import glob
 
 from peer_to_peer.AudioManager import AudioManager, AudioDevice
-
+from modem.processing_hub import ModulatorHub, DemodulatorHub, Modulator, Demodulator, Binary
 from peer_to_peer.utils import Config, setup_config, configure_logging, setup_audio_devices, User
 import json
 import os
@@ -26,14 +28,12 @@ class PeerToPeerHub:
 
         self.__stdscr = stdscr
 
-
-
-
-
         self.__user = None
         self.ui = None
         self.__user_id = None
-        self.__modulation_type = None
+        self.__modulation_type: Optional[Modulator] = None
+        self.__demodulation_type: Optional[Demodulator] = None
+
         self.__logger = configure_logging(logs_path="peer_to_peer_com.log", logs_name="peer to peer")
         self.__peer_config = None
         self.__audio_manager: Optional[AudioManager] = None
@@ -44,6 +44,9 @@ class PeerToPeerHub:
         self.event = Event()
 
         self.__messages_to_send = []
+
+        self.__modulator_hub = ModulatorHub(logger=self.__logger, processing_type="Modulator")
+        self.__demodulator_hub = DemodulatorHub(logger=self.__logger, processing_type="Demodulator")
 
     def get_user_id(self):
         return self.__user_id
@@ -60,7 +63,10 @@ class PeerToPeerHub:
         self.__user_id = user_id
 
     def update_modulation_type(self, modulation_type: str = ""):
-        self.__modulation_type = modulation_type
+        modulators = self.__load_package(Modulator)
+        demodulators = self.__load_package(Demodulator)
+        self.__modulation_type = modulators[modulation_type]
+        self.__demodulation_type = demodulators[modulation_type]
 
     def update_peer_config(self, peer_config: dict):
         self.__peer_config = peer_config
@@ -152,15 +158,46 @@ class PeerToPeerHub:
         while True:
             if self.event.is_set():
                 break
-            self.__audio_manager.listen()
+            #self.__audio_manager.listen()
 
     def __transmit_thread(self):
         while True:
             if self.event.is_set():
                 break
             if len(self.__messages_to_send):
-                self.ui.chatbuffer_add(self.__messages_to_send[0])
+                message = self.__messages_to_send[0]
+                binary = Binary(bytearray(str(message).encode('utf-8')))
+                encoded_message = self.__modulator_hub.encode_data(binary)
+                modulated_data = self.__modulator_hub.modulate(encoded_message, self.__modulation_type)
+                self.__audio_manager.play(modulated_data.samples)
+                self.ui.chatbuffer_add(message)
                 self.__messages_to_send.pop(0)
+
+    def __load_package(self, package_type) -> dict:
+        """
+        this method loads all implemented classes of type <package_type> and return them as a dict
+        :param package_type:
+        :return:
+        """
+        package = {}
+        p_name = f"{str(package_type.__name__).lower()}s"
+        modules = []
+        for file in glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), f"{p_name}/*.py")):
+            sys.path.append(f"{os.path.join(os.path.dirname(os.path.abspath(__file__)))}/{p_name}")
+            modules.append(__import__(os.path.splitext(os.path.basename(file))[0]))
+
+        for module in modules:
+            for name, obj in inspect.getmembers(module):
+                if not inspect.isclass(obj):
+                    continue
+                if not issubclass(obj, package_type):
+                    continue
+                if obj == package_type:
+                    continue
+
+                package[name] = obj
+
+        return package
 
     def transmit_message(self, message):
         if message == "/quit":
@@ -182,9 +219,6 @@ class PeerToPeerHub:
 
 def main():
     hub = wrapper(PeerToPeerHub)
-
-
-
 
     automated = True
 
@@ -220,13 +254,20 @@ def main():
                 input_device = device["device_index"]
 
         for _, device in audio_devices["output"].items():
+            print(device)
             if device["name"] == "default":
                 output_device = device["device_index"]
         hub.get_logger().debug(f"input device: {input_device}      output device: {output_device}")
         status = hub.set_audio_devices(input_device, output_device)
         print(status)
-
+    print(input_device,output_device)
     status = hub.start_app()
+
+    #hub.transmit_message("sram hujem xD")
+    #time.sleep(1)
+    #hub.transmit_message("fff")
+    #while True:
+    #    pass
     #print(status)
 
     while True:

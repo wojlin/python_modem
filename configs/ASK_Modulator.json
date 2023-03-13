@@ -1,6 +1,6 @@
 {
   "sample_rate[Hz]": 44100,
-  "carrier_frequency[Hz]": 6000,
+  "carrier_frequency[Hz]": 3000,
   "one_symbol_amplitude": 1.0,
   "zero_symbol_amplitude": 0.1,
   "silence_at_start[s]": 0.1,

@@ -32,7 +32,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     data_to_write = None
 
     if command == "modulate":
-        hub = ModulatorHub(logger=logger, processing_type="Modulator", processing_mode=processing_mode)
+        hub = ModulatorHub(logger=logger, processing_type="Modulator")
         binary_encoded_data = hub.encode_data(data.data)
         modulated_data: ModulatedData = hub.modulate(binary_encoded_data, data.modulators[processing_mode])
         data_to_write = modulated_data
@@ -47,7 +47,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             hub.analise_modulated_data(modulated_data)
 
     elif command == "demodulate":
-        hub = DemodulatorHub(logger=logger, processing_type="Demodulator", processing_mode=processing_mode)
+        hub = DemodulatorHub(logger=logger, processing_type="Demodulator")
         demodulated_data: DemodulatedData = hub.demodulate(data.data, data.demodulators[processing_mode])
         data_to_write = demodulated_data
         if demodulated_data.crc_check_pass:

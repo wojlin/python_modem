@@ -23,7 +23,7 @@ class AudioManager:
         self.__peer_config = peer_config
         self.__logger = logger
 
-        self.__FORMAT = pyaudio.paInt16
+        self.__FORMAT = pyaudio.paFloat32
         self.__CHANNELS = 1
         self.__RATE = 44100
         self.__CHUNK = 512
@@ -41,6 +41,12 @@ class AudioManager:
         self.__recording = False
 
         self.__chunks = []
+
+    def play(self, samples):
+        str_samples = samples.astype(np.float32).tostring()
+        self.__stream.start_stream()
+        self.__stream.write(str_samples, exception_on_underflow=False, )
+        self.__stream.stop_stream()
 
     def can_record(self):
         return self.__can_record
@@ -75,6 +81,7 @@ class AudioManager:
     def get_audio_input_devices(self) -> List[AudioDevice]:
         audio_devices = []
         info = self.__audio.get_host_api_info_by_index(0)
+        print(info)
         devices_amount = info.get('deviceCount')
         for i in range(0, devices_amount):
             channels = self.__audio.get_device_info_by_host_api_device_index(0, i).get('maxInputChannels')
@@ -116,6 +123,7 @@ class AudioManager:
         self.__set_audio_output_device(output_device_index)
         self.__setup_recording()
 
+
     def __setup_recording(self):
         self.__stream = self.__audio.open(format=self.__FORMAT,
                                           channels=self.__CHANNELS,
@@ -123,7 +131,8 @@ class AudioManager:
                                           input=True,
                                           input_device_index=self.__selected_audio_output_device,
                                           output_device_index=self.__selected_audio_output_device,
-                                          frames_per_buffer=self.__CHUNK)
+                                          frames_per_buffer=self.__CHUNK,
+                                          output=True)
         self.__can_record = True
 
     def stop_recording(self):

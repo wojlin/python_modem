@@ -1,7 +1,8 @@
-2023-03-08 15:55:45,129 129ms - (program_core.py:32) - INFO - received app run args: {'command': 'modulate', 'raw': False, 'verbose': False, 'analise': '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/100-baudrate_1000-chars_ASK-modulation_modulate.png', 'show': False, 'mode': 'ASK', 'input': 'MUQHIIOIYZRDMFUZTKFTYXYKTUEPSUBUVCKOLNJZSQICKPVGLDTPMKGSDNUIQVXENGUVVHUYTDRCZJUYPPPHSOOIIJOVPBXXFTQHTCLLEFVEOGIEFYOUQEYIHDOAEFYCXRCSFSYGGQZMIRMCBRHFMYPXOQASZDWWTFTCYQVKYLIARNXAXFZHVCQXWZOISNVYBDJYVYLMUWCTQYPGLNEEGWSLZRVTFKBAQSRSYRSXODHHPEVYQLMLSQRKSXZBVBRPPHUYWRSSPSYEPUNFAXEIXRTFTQBUITXUZAJJOBZLJJHRWLPPCLEVLBFETVGUGHQHWFFJATCKNTKYZIXTZDWALBFCQCJQZSSCEREOXLOKTURKUBNSTIRYQJOYQPHEVPHGHLSPNUZUUNVNRKBFLOAIWZWSOBLQKQUCDZYEIWKQGGBMERYDOZAXIVPERHSISRFQOYSFCVEQNCPUIJLEDNENMBDOVIVGEYCSGBPBPGILAKOSTTYDRLSWUCRQEHGZDKTSVXHITFHGORQXEUPXUOXOXFDNUQHRKTVVRDSNNLGRWEXUYALYGKEDUJSXAEADLJHANXEYNUVTLHNMUJTEEMXYNLOSNWLTIGPMKACCFFWMBTPRJDGYVWNQQEIVHFBFREESSSGTACFHFDUSUUTZENVIVHQDMRDSXZPJEFSHOXLMHFTPMPDKKDKGFDCALOLMSNKQGZMGLDKQAJSFKPCMZPKRBNHLXRURCNSCFPKVPAEBSGCQPRVDWOHBAYQEFMGGVYVCICINEXQCHXNXXNPDXMXPSJGYGQFUGUYBRSBABRGQMCARKDKJEHVRUALZRCSYSXKEVLOTJQDKNWJHKCSZGJLEPFXBMJDPWHCINNFEJTWDFHVFQVWJKZLODVSFAPAMTSHPFKFQFIGLVLCFKPFVMXRIHBPVFJCMFZNDUHLVGNBRBIIAGOEZPMNXGUMHSUESRTMGLACMQCOWROMZEVMPLVJPSXCJDJDFQYWHKXVXONNB', 'output': '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/100-baudrate_1000-chars_ASK-modulation.wav', 'play': False} 
-2023-03-08 15:55:45,129 129ms - (program_core.py:33) - INFO - loaded modulators: FSK, ASK 
-2023-03-08 15:55:45,129 129ms - (program_core.py:34) - INFO - loaded demodulators: ASK, FSK 
-2023-03-08 15:55:45,130 130ms - (main.py:16) - INFO - init stage complete! 
-2023-03-08 15:55:46,455 455ms - (ASK_Modulator.py:67) - INFO - applying filter... 
-2023-03-08 15:55:46,584 584ms - (ASK_Modulator.py:91) - INFO - modulation complete! 
-2023-03-08 15:55:46,584 584ms - (processing_hub.py:118) - INFO - saving modulated data to '/home/anon/PROJECTS/python_modem/tests/temp/ASK-modulation/100-baudrate_1000-chars_ASK-modulation.wav' 
+2023-03-13 01:32:29,609 609ms - (program_core.py:32) - INFO - received app run args: {'command': 'demodulate', 'raw': False, 'verbose': False, 'analise': None, 'show': False, 'mode': 'ASK', 'input': '/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation.wav', 'output': '/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation.txt'} 
+2023-03-13 01:32:29,609 609ms - (program_core.py:33) - INFO - loaded modulators: ASK, FSK 
+2023-03-13 01:32:29,609 609ms - (program_core.py:34) - INFO - loaded demodulators: FSK, ASK 
+2023-03-13 01:32:29,609 609ms - (program_core.py:246) - INFO - opening audio file... 
+2023-03-13 01:32:29,610 610ms - (main.py:16) - INFO - init stage complete! 
+2023-03-13 01:32:29,906 906ms - (ASK_Demodulator.py:24) - INFO - message demodulated in 0.3s 
+2023-03-13 01:32:29,906 906ms - (main.py:55) - INFO - demodulated data: 'VOVUDKVRQK' 
+2023-03-13 01:32:29,906 906ms - (processing_hub.py:222) - INFO - saving demodulated data to '/PROJECTS/python_modem/tests/temp/ASK-modulation/20-baudrate_10-chars_ASK-modulation.txt' 
