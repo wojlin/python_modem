@@ -35,7 +35,8 @@ class AudioManager:
 
         self.__selected_audio_output_device: AudioDevice
         self.__selected_audio_input_device: AudioDevice
-        self.__stream: pyaudio.Stream
+        self.__record_stream: pyaudio.Stream
+        self.__play_stream: pyaudio.Stream
 
         self.__can_record = False
         self.__recording = False
@@ -44,9 +45,9 @@ class AudioManager:
 
     def play(self, samples):
         str_samples = samples.astype(np.float32).tostring()
-        self.__stream.start_stream()
-        self.__stream.write(str_samples, exception_on_underflow=False, )
-        self.__stream.stop_stream()
+        self.__play_stream.start_stream()
+        self.__play_stream.write(str_samples, exception_on_underflow=False, )
+        self.__play_stream.stop_stream()
 
     def can_record(self):
         return self.__can_record
@@ -74,7 +75,7 @@ class AudioManager:
         frames = np.empty(shape=1)
         self.__logger.debug("recording chunk...")
         for i in range(0, int(self.__RATE / self.__CHUNK * self.__RECORD_SECONDS)):
-            data = np.frombuffer(self.__stream.read(self.__CHUNK), dtype=np.int16)
+            data = np.frombuffer(self.__record_stream.read(self.__CHUNK), dtype=np.int16)
             frames = np.append(frames, data)
         return frames
 
@@ -125,14 +126,20 @@ class AudioManager:
 
 
     def __setup_recording(self):
-        self.__stream = self.__audio.open(format=self.__FORMAT,
-                                          channels=self.__CHANNELS,
-                                          rate=self.__RATE,
-                                          input=True,
-                                          input_device_index=self.__selected_audio_output_device,
-                                          output_device_index=self.__selected_audio_output_device,
-                                          frames_per_buffer=self.__CHUNK,
-                                          output=True)
+        self.__record_stream = self.__audio.open(format=self.__FORMAT,
+                                                 channels=self.__CHANNELS,
+                                                 rate=self.__RATE,
+                                                 input=True,
+                                                 input_device_index=self.__selected_audio_output_device,
+                                                 frames_per_buffer=self.__CHUNK,
+                                                 output=False)
+        self.__play_stream = self.__audio.open(format=self.__FORMAT,
+                                                 channels=self.__CHANNELS,
+                                                 rate=self.__RATE,
+                                                 input=False,
+                                                 output_device_index=self.__selected_audio_output_device,
+                                                 frames_per_buffer=self.__CHUNK,
+                                                 output=True)
         self.__can_record = True
 
     def stop_recording(self):
@@ -141,8 +148,8 @@ class AudioManager:
         """
         if self.__can_record:
             self.__logger.debug("stopping recording...")
-            self.__stream.stop_stream()
-            self.__stream.close()
+            self.__record_stream.stop_stream()
+            self.__record_stream.close()
             self.__audio.terminate()
             self.__logger.debug("recording stopped!")
             self.__recording = False

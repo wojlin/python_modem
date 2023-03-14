@@ -158,7 +158,7 @@ class PeerToPeerHub:
         while True:
             if self.event.is_set():
                 break
-            #self.__audio_manager.listen()
+            self.__audio_manager.listen()
 
     def __transmit_thread(self):
         while True:
