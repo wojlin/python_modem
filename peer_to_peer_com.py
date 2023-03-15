@@ -260,7 +260,7 @@ def main():
         hub.get_logger().debug(f"input device: {input_device}      output device: {output_device}")
         status = hub.set_audio_devices(input_device, output_device)
         print(status)
-    print(input_device,output_device)
+    print(input_device, output_device)
     status = hub.start_app()
 
     #hub.transmit_message("sram hujem xD")
